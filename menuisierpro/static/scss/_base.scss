@@ -1,0 +1,14 @@
+@use 'variables' as *;
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: $font-corps;
+  background: $color-fond;
+  color: $color-texte;
+  line-height: 1.6;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: $color-accent; text-decoration: none; }

@@ -1,0 +1,27 @@
+@use '../variables' as *;
+
+.devis-form {
+  max-width: 600px;
+  margin: 0 auto;
+
+  &__groupe { margin-bottom: $espace-md; }
+  &__label  { display: block; font-weight: 500; margin-bottom: $espace-xs; }
+  &__input  {
+    width: 100%;
+    padding: $espace-sm $espace-md;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: $font-corps;
+  }
+  &__btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: $espace-sm;
+    background: #25D366;
+    color: white;
+    padding: $espace-sm $espace-lg;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+}

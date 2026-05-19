@@ -1,0 +1,6 @@
+django>=4.2
+psycopg2-binary
+pillow
+python-dotenv
+djangorestframework
+django-cors-headers
