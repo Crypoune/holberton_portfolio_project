@@ -1,10 +1,10 @@
-# 🪵 GEPPETTO'S HOUSE — Site web dynamique pour artisan menuisier
+# 🪵 MenuisierPro — Site web dynamique pour artisan menuisier
 
 Projet full-stack Django développé dans le cadre d'un cursus en développement web, pour un artisan menuisier/charpentier basé à Madagascar.
 
 ---
 
-## Contexte
+## 📌 Contexte
 
 Ce projet répond à un double objectif :
 
@@ -15,7 +15,7 @@ Le site s'adapte aux contraintes locales : réseau 3G, usage dominant de WhatsAp
 
 ---
 
-## Fonctionnalités
+## ✨ Fonctionnalités
 
 ### Axe scolaire
 | Fonctionnalité | Description |
@@ -32,7 +32,7 @@ Le site s'adapte aux contraintes locales : réseau 3G, usage dominant de WhatsAp
 
 ---
 
-## 🗂️ Modèle de données
+## Modèle de données
 
 ```mermaid
 classDiagram
@@ -103,7 +103,7 @@ classDiagram
 
 ---
 
-## 🛠️ Stack technique
+## Stack technique
 
 | Composant | Technologie |
 |---|---|
@@ -115,7 +115,7 @@ classDiagram
 
 ---
 
-## 🗓️ Plan de développement
+## Plan de développement
 
 | Sprint | Semaines | Fonctionnalité | Priorité |
 |---|---|---|---|
@@ -135,7 +135,7 @@ classDiagram
 
 ---
 
-## 🚀 Installation (à compléter)
+## Installation (à compléter)
 
 ```bash
 git clone https://github.com/ton-repo/menuisierpro.git
@@ -150,6 +150,6 @@ python manage.py runserver
 
 ---
 
-## 👥 Équipe
+## Équipe
 
-Projet réalisé en binôme — tempo ??
+Projet réalisé par Arnaud Messenet, Thomas Haenel et Jason Jean Louis — 2 mois
