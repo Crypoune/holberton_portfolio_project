@@ -144,3 +144,12 @@ class TemoignageAdmin(admin.ModelAdmin):
     def invalider_temoignages(self, request, queryset):
         count = queryset.update(est_valide=False)
         self.message_user(request, f"{count} témoignage(s) invalidé(s).")
+
+
+# ==============================================================================
+# CONFIGURATION GLOBALE DU DASHBOARD ARTISAN
+# ==============================================================================
+
+admin.site.site_header = "Dashboard Gepetto's House"
+admin.site.site_title = "Admin Artisan"
+admin.site.index_title = "Bienvenue sur votre espace de gestion"

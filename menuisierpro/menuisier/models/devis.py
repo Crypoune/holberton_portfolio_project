@@ -1,6 +1,7 @@
+from datetime import timedelta
+from django.utils import timezone
 from django.db import models
 from .client_prospect import Client_Prospect
-
 
 class Devis(models.Model):
 
@@ -30,6 +31,16 @@ class Devis(models.Model):
                                 )
     date_relance_j3           = models.DateTimeField(null=True, blank=True)
     date_relance_j7           = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Nouveau devis : calcul automatique des dates de relance
+            now = timezone.now()
+            if not self.date_relance_j3:
+                self.date_relance_j3 = now + timedelta(days=3)
+            if not self.date_relance_j7:
+                self.date_relance_j7 = now + timedelta(days=7)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Devis {self.id} — {self.type_meuble} ({self.get_statut_display()})"
