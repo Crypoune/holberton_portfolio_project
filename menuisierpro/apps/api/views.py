@@ -1,6 +1,6 @@
 # À compléter — sprint 2
 from rest_framework import viewsets, permissions
-from menuisier.models import Chantier, Temoignage, Devis
+from apps.menuisier.models import Chantier, Temoignage, Devis
 from .serializers import ChantierSerializer, TemoignageSerializer, DevisSerializer
 
 

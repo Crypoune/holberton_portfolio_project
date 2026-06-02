@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from menuisier.models import Devis
+from apps.menuisier.models import Devis
 
 
 class DevisSerializer(serializers.ModelSerializer):

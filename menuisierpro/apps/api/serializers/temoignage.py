@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from menuisier.models import Temoignage
+from apps.menuisier.models import Temoignage
 
 
 class TemoignageSerializer(serializers.ModelSerializer):

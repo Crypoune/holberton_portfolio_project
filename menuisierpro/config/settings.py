@@ -18,8 +18,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'menuisier',
-    'api',
+    'apps.menuisier',
+    'apps.api',
 ]
 
 MIDDLEWARE = [

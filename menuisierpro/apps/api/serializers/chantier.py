@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from menuisier.models import Chantier, ImageChantier
+from apps.menuisier.models import Chantier, ImageChantier
 
 
 class ImageChantierSerializer(serializers.ModelSerializer):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from menuisier.models import Client_Prospect
+from apps.menuisier.models import Client_Prospect
 
 
 class ClientProspectSerializer(serializers.ModelSerializer):
