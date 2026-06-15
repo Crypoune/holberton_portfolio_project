@@ -1,0 +1,53 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.devis-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  &__nom {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  &__meuble {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.125rem;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+
+  &__jours {
+    color: #d97706;
+    font-weight: 500;
+  }
+
+  &__contact {
+    font-size: 0.8rem;
+    color: #9ca3af;
+  }
+
+  &__action {
+    margin-top: 0.25rem;
+  }
+}
