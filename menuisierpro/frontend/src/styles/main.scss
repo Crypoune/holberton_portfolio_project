@@ -3,6 +3,10 @@
 @use "mixins" as *;
 @use "base";
 
+@use "components/accueil";
+@use "components/portfolio";
+@use "components/demande-devis";
+
 @use "components/badge";
 @use "components/stat-card";
 @use "components/devis-card";

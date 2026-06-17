@@ -1,5 +1,6 @@
 function Sidebar({ activePage, onNavigate }) {
   const links = [
+    { id: "accueil", label: "Accueil", icon: "🏠" },
     { id: "dashboard", label: "Tableau de bord", icon: "🏠" },
     { id: "portfolio", label: "Portfolio", icon: "📁" },
     { id: "devis", label: "Demander un devis", icon: "💬" },

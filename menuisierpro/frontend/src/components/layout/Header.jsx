@@ -4,6 +4,7 @@ function Header({ onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
+    { id: "accueil", label: "Accueil" },
     { id: "dashboard", label: "Tableau de bord" },
     { id: "portfolio", label: "Portfolio" },
     { id: "devis", label: "Demander un devis" },
