@@ -48,6 +48,10 @@
     text-align: left;
     transition: background 0.15s ease;
 
+    svg {
+      flex-shrink: 0;
+    }
+
     &:hover {
       background: #f3f4f6;
       color: #1f2937;
@@ -87,7 +91,8 @@
   }
 
   &__burger {
-    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
     color: #1f2937;
   }
 

@@ -1,9 +1,16 @@
+import {
+  Compass,
+  LayoutDashboard,
+  FolderOpen,
+  MessageSquare,
+} from "lucide-react";
+
 function Sidebar({ activePage, onNavigate }) {
   const links = [
-    { id: "accueil", label: "Accueil", icon: "🏠" },
-    { id: "dashboard", label: "Tableau de bord", icon: "🏠" },
-    { id: "portfolio", label: "Portfolio", icon: "📁" },
-    { id: "devis", label: "Demander un devis", icon: "💬" },
+    { id: "accueil", label: "Accueil", Icon: Compass },
+    { id: "dashboard", label: "Tableau de bord", Icon: LayoutDashboard },
+    { id: "portfolio", label: "Portfolio", Icon: FolderOpen },
+    { id: "devis", label: "Demander un devis", Icon: MessageSquare },
   ];
 
   return (
@@ -19,7 +26,7 @@ function Sidebar({ activePage, onNavigate }) {
             className={`sidebar__link ${activePage === link.id ? "sidebar__link--active" : ""}`}
             onClick={() => onNavigate(link.id)}
           >
-            <span>{link.icon}</span>
+            <link.Icon size={18} />
             {link.label}
           </button>
         ))}

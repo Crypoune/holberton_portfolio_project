@@ -1,18 +1,19 @@
 import WhatsAppButton from "../components/ui/WhatsAppButton";
+import { Hammer, ChefHat, BookOpen, Star } from "lucide-react";
 
 const SERVICES = [
   {
-    icon: "🪑",
+    Icon: Hammer,
     title: "Meubles sur mesure",
     desc: "Tables, chaises, bancs personnalisés. Adaptés à vos besoins et votre espace.",
   },
   {
-    icon: "🔍",
+    Icon: ChefHat,
     title: "Cuisines & Rangements",
     desc: "Aménagements cuisine complets. Solutions de rangement optimisées.",
   },
   {
-    icon: "📚",
+    Icon: BookOpen,
     title: "Bibliothèques & Dressings",
     desc: "Bibliothèques murales et sur mesure. Dressings et placards personnalisés.",
   },
@@ -93,7 +94,7 @@ function Accueil({ onNavigate }) {
       <section className="accueil__services">
         {SERVICES.map((s) => (
           <div key={s.title} className="service-card">
-            <span className="service-card__icon">{s.icon}</span>
+            <s.Icon className="service-card__icon" size={28} />
             <h3>{s.title}</h3>
             <p>{s.desc}</p>
           </div>
@@ -119,7 +120,9 @@ function Accueil({ onNavigate }) {
             <div key={t.nom} className="temoignage-card">
               <h4>{t.nom}</h4>
               <div className="temoignage-card__stars">
-                {"⭐".repeat(t.note)}
+                {Array.from({ length: t.note }).map((_, i) => (
+                  <Star key={i} size={16} fill="#f59e0b" color="#f59e0b" />
+                ))}
               </div>
               <p>"{t.texte}"</p>
             </div>

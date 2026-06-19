@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 function Header({ onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,7 +24,7 @@ function Header({ onNavigate }) {
           className="header__burger"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          ☰
+          {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
       {menuOpen && (

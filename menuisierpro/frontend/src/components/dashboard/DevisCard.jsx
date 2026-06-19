@@ -1,3 +1,4 @@
+import { Phone, Calendar, Clock } from "lucide-react";
 import Badge from "../ui/Badge";
 import WhatsAppButton from "../ui/WhatsAppButton";
 
@@ -39,10 +40,17 @@ function DevisCard({ devis }) {
       </div>
 
       <div className="devis-card__meta">
-        <span>📞 {client?.telephone_whatsapp}</span>
-        <span>📅 {new Date(date_creation).toLocaleDateString("fr-FR")}</span>
+        <span>
+          <Phone size={14} /> {client?.telephone_whatsapp}
+        </span>
+        <span>
+          <Calendar size={14} />{" "}
+          {new Date(date_creation).toLocaleDateString("fr-FR")}
+        </span>
         {jours > 2 && (
-          <span className="devis-card__jours">🕐 Il y a {jours} jours</span>
+          <span className="devis-card__jours">
+            <Clock size={14} /> Il y a {jours} jours
+          </span>
         )}
       </div>
 

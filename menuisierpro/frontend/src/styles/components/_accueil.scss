@@ -98,9 +98,9 @@
   flex: 1;
 
   &__icon {
-    font-size: 1.75rem;
     display: block;
     margin-bottom: 0.75rem;
+    color: #f59e0b;
   }
 
   h3 {
@@ -159,8 +159,9 @@
   }
 
   &__stars {
+    display: flex;
+    gap: 0.125rem;
     margin-bottom: 0.75rem;
-    font-size: 0.9rem;
   }
 
   p {
