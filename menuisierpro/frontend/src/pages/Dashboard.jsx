@@ -1,9 +1,9 @@
 import StatCard from "../components/dashboard/StatCard";
-import DevisList from "../components/dashboard/DevisList";
-import useDevis from "../hooks/useDevis";
+import QuotesList from "../components/dashboard/QuotesList";
+import useQuotes from "../hooks/useQuotes";
 
 function Dashboard() {
-  const { devis, stats, loading, error } = useDevis();
+  const { quotes, stats, loading, error } = useQuotes();
 
   if (loading) return <div className="dashboard__loading">Chargement...</div>;
   if (error) return <div className="dashboard__error">Erreur : {error}</div>;
@@ -26,7 +26,7 @@ function Dashboard() {
         <p className="dashboard__subtitle">
           Cliquez sur le bouton WhatsApp pour relancer vos clients
         </p>
-        <DevisList devis={devis} />
+        <QuotesList quotes={quotes} />
       </section>
     </main>
   );

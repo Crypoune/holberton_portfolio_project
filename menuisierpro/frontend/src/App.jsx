@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Sidebar from "./components/layout/Sidebar";
 import Header from "./components/layout/Header";
-import Accueil from "./pages/Accueil";
+import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Portfolio from "./pages/Portfolio";
-import DemandeDevis from "./pages/DemandeDevis";
+import RequestQuote from "./pages/RequestQuote";
 
 function App() {
   const [activePage, setActivePage] = useState("dashboard");
@@ -14,10 +14,10 @@ function App() {
       <Sidebar activePage={activePage} onNavigate={setActivePage} />
       <Header onNavigate={setActivePage} />
       <div className="app__content">
-        {activePage === "accueil" && <Accueil onNavigate={setActivePage} />}
+        {activePage === "accueil" && <Home onNavigate={setActivePage} />}
         {activePage === "dashboard" && <Dashboard />}
         {activePage === "portfolio" && <Portfolio />}
-        {activePage === "devis" && <DemandeDevis />}
+        {activePage === "devis" && <RequestQuote />}
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const MATERIAUX = [
   "Autre / je ne sais pas",
 ];
 
-function DemandeDevis() {
+function RequestQuote() {
   const [form, setForm] = useState({
     nom: "",
     telephone_whatsapp: "",
@@ -26,7 +26,7 @@ function DemandeDevis() {
     dimensions_approximatives: "",
     materiau: "",
   });
-  const [statut, setStatut] = useState("idle"); // idle | envoi | succes | erreur
+  const [status, setStatus] = useState("idle"); // idle | envoi | succes | erreur
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,25 +34,25 @@ function DemandeDevis() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatut("envoi");
+    setStatus("envoi");
 
     try {
-      const res = await fetch("/api/v1/devis/", {
+      const res = await fetch("/api/v1/quotes/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       if (!res.ok) throw new Error("Erreur lors de l'envoi");
-      setStatut("succes");
+      setStatus("succes");
     } catch (err) {
-      setStatut("erreur");
+      setStatus("erreur");
     }
   };
 
-  if (statut === "succes") {
+  if (status === "succes") {
     return (
       <main className="demande-devis demande-devis--succes">
-        <h1>Merci ! 🎉</h1>
+        <h1>Merci !Ò</h1>
         <p>
           Votre demande de devis a bien été envoyée. Nous vous répondrons sous
           24h sur WhatsApp.
@@ -150,7 +150,7 @@ function DemandeDevis() {
           </select>
         </fieldset>
 
-        {statut === "erreur" && (
+        {status === "erreur" && (
           <p className="demande-devis__error">
             Une erreur est survenue, réessayez.
           </p>
@@ -159,13 +159,13 @@ function DemandeDevis() {
         <button
           type="submit"
           className="demande-devis__submit"
-          disabled={statut === "envoi"}
+          disabled={status === "envoi"}
         >
-          {statut === "envoi" ? "Envoi en cours..." : "Envoyer ma demande"}
+          {status === "envoi" ? "Envoi en cours..." : "Envoyer ma demande"}
         </button>
       </form>
     </main>
   );
 }
 
-export default DemandeDevis;
+export default RequestQuote;

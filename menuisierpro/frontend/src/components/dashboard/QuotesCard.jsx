@@ -2,7 +2,7 @@ import { Phone, Calendar, Clock } from "lucide-react";
 import Badge from "../ui/Badge";
 import WhatsAppButton from "../ui/WhatsAppButton";
 
-function DevisCard({ devis }) {
+function QuotesCard({ quotes }) {
   const {
     client,
     type_meuble,
@@ -11,29 +11,29 @@ function DevisCard({ devis }) {
     date_relance_j3,
     date_relance_j7,
     message_whatsapp_genere,
-  } = devis;
+  } = quotes;
 
-  const joursDepuis = (date) => {
+  const daysThen = (date) => {
     const diff = Date.now() - new Date(date).getTime();
     return Math.floor(diff / (1000 * 60 * 60 * 24));
   };
 
-  const jours = joursDepuis(date_creation);
+  const days = daysThen(date_creation);
 
-  const labelBouton = () => {
+  const labelButton = () => {
     if (statut === "converti") return null;
     if (!date_relance_j3) return `Relance J+3`;
     if (!date_relance_j7) return `Relance J+7`;
     return "Contacter";
   };
 
-  const bouton = labelBouton();
+  const button = labelButton();
 
   return (
     <div className="devis-card">
       <div className="devis-card__header">
         <div>
-          <h3 className="devis-card__nom">{client?.nom}</h3>
+          <h3 className="devis-card__nom">{client?.name}</h3>
           <p className="devis-card__meuble">{type_meuble}</p>
         </div>
         <Badge statut={statut} />
@@ -47,9 +47,9 @@ function DevisCard({ devis }) {
           <Calendar size={14} />{" "}
           {new Date(date_creation).toLocaleDateString("fr-FR")}
         </span>
-        {jours > 2 && (
+        {days > 2 && (
           <span className="devis-card__jours">
-            <Clock size={14} /> Il y a {jours} jours
+            <Clock size={14} /> Il y a {days} jours
           </span>
         )}
       </div>
@@ -63,15 +63,15 @@ function DevisCard({ devis }) {
         </p>
       )}
 
-      {bouton && (
+      {button && (
         <div className="devis-card__action">
           <WhatsAppButton
             telephone={client?.telephone_whatsapp}
             message={
               message_whatsapp_genere ||
-              `Bonjour ${client?.nom}, je vous relance concernant votre devis pour : ${type_meuble}.`
+              `Bonjour ${client?.name}, je vous relance concernant votre devis pour : ${type_meuble}.`
             }
-            label={bouton}
+            label={button}
           />
         </div>
       )}
@@ -79,4 +79,4 @@ function DevisCard({ devis }) {
   );
 }
 
-export default DevisCard;
+export default QuotesCard;
