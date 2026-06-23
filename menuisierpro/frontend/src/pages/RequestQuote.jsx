@@ -37,7 +37,7 @@ function RequestQuote() {
     setStatus("envoi");
 
     try {
-      const res = await fetch("/api/v1/quotes/", {
+      const res = await fetch("/api/v1/devis/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -52,7 +52,7 @@ function RequestQuote() {
   if (status === "succes") {
     return (
       <main className="demande-devis demande-devis--succes">
-        <h1>Merci !Ò</h1>
+        <h1>Merci !</h1>
         <p>
           Votre demande de devis a bien été envoyée. Nous vous répondrons sous
           24h sur WhatsApp.
