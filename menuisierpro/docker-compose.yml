@@ -22,5 +22,19 @@ services:
     env_file:
       - .env
 
+  frontend:
+    image: node:20-slim
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    # sh -c permet d'installer les paquets Node requis avant d'allumer le serveur Vite
+    command: sh -c "npm install && npm run dev -- --host"
+    depends_on:
+      - web
+    env_file:
+      - .env
+
 volumes:
   postgres_data:

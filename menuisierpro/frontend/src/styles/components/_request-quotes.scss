@@ -1,0 +1,107 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.demande-devis {
+  padding: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+
+  @include lg {
+    padding: 2rem;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__error {
+    color: #dc2626;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  &__submit {
+    background-color: #22c55e;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.875rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #16a34a;
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &--succes {
+    text-align: center;
+    padding-top: 4rem;
+
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      color: #6b7280;
+    }
+  }
+}
+
+fieldset {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+
+  legend {
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0 0.5rem;
+    color: #1f2937;
+  }
+}
+
+label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: -0.5rem;
+}
+
+input,
+select {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #fff;
+
+  &:focus {
+    outline: none;
+    border-color: #f59e0b;
+  }
+}
