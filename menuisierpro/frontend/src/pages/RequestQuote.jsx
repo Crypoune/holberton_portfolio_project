@@ -37,7 +37,7 @@ function RequestQuote() {
     setStatus("envoi");
 
     try {
-      const res = await fetch("/api/v1/quotes/", {
+      const res = await fetch("/api/v1/devis/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
