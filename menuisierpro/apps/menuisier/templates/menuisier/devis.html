@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Demande de Devis — Menuisier Pro{% endblock %}
+
+{% block content %}
+<div class="devis-container" style="padding: 40px 20px;">
+  
+  <div style="text-align: center; margin-bottom: 40px;">
+    <h1 style="font-family: 'Georgia', serif; color: #8B5E3C; margin-bottom: 10px;">Configurez votre projet en bois</h1>
+    <p style="color: #666; max-width: 500px; margin: 0 auto;">
+      Remplissez ce formulaire pour transmettre vos besoins à l'artisan. Un message de validation sera généré pour votre suivi WhatsApp.
+    </p>
+  </div>
+
+  {% if messages %}
+    <div class="messages-container" style="max-width: 600px; margin: 0 auto 20px auto;">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" style="padding: 12px; border-radius: 6px; margin-bottom: 10px; background: {% if message.tags == 'success' %}#D4EDDA{% else %}#F8D7DA{% endif %}; color: {% if message.tags == 'success' %}#155724{% else %}#721C24{% endif %};">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form action="{% url 'menuisier:devis' %}" method="POST" class="devis-form">
+    {% csrf_token %}
+
+    <h3 style="margin-bottom: 20px; color: #2D6A4F; font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+      1. Vos coordonnées
+    </h3>
+    
+    <div class="devis-form__groupe">
+      <label for="nom" class="devis-form__label">Votre nom complet *</label>
+      <input type="text" name="nom" id="nom" required class="devis-form__input" placeholder="Ex: Jean De Dieu">
+    </div>
+
+    <div class="devis-form__groupe">
+      <label for="telephone_whatsapp" class="devis-form__label">Numéro WhatsApp (Format: +261...) *</label>
+      <input type="tel" name="telephone_whatsapp" id="telephone_whatsapp" required class="devis-form__input" placeholder="Ex: +261340000000">
+    </div>
+
+    <div class="devis-form__groupe">
+      <label for="email" class="devis-form__label">Adresse Email (Optionnel)</label>
+      <input type="email" name="email" id="email" class="devis-form__input" placeholder="Ex: jean@exemple.com">
+    </div>
+
+
+    <h3 style="margin-top: 30px; margin-bottom: 20px; color: #2D6A4F; font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+      2. Votre demande sur-mesure
+    </h3>
+
+    <div class="devis-form__groupe">
+      <label for="{{ form.type_meuble.id_for_label }}" class="devis-form__label">Type de meuble ou travaux *</label>
+      <input type="text" name="type_meuble" id="{{ form.type_meuble.id_for_label }}" required class="devis-form__input" placeholder="Ex: Cuisine équipée, Armoire encastrée">
+    </div>
+
+    <div class="devis-form__groupe">
+      <label for="{{ form.dimensions_approximatives.id_for_label }}" class="devis-form__label">Dimensions approximatives</label>
+      <input type="text" name="dimensions_approximatives" id="{{ form.dimensions_approximatives.id_for_label }}" class="devis-form__input" placeholder="Ex: 3m x 2.5m ou Hauteur 2m">
+    </div>
+
+    <div class="devis-form__groupe">
+      <label for="{{ form.materiau.id_for_label }}" class="devis-form__label">Matériau / Bois souhaité</label>
+      <input type="text" name="materiau" id="{{ form.materiau.id_for_label }}" class="devis-form__input" placeholder="Ex: Chêne massif, Pin, Palissandre">
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <button type="submit" class="devis-form__btn-whatsapp" style="border: none; font-size: 1rem;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        Envoyer ma demande à l'artisan
+      </button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

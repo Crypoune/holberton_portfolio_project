@@ -1,0 +1,33 @@
+.stat-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+
+    &.orange {
+      color: #f59e0b;
+    }
+    &.green {
+      color: #22c55e;
+    }
+    &.red {
+      color: #ef4444;
+    }
+    &.black {
+      color: #1f2937;
+    }
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+}
