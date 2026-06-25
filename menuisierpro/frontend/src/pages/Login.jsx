@@ -33,11 +33,6 @@ function Login({ onLoginSuccess }) {
     }
   };
 
-  const handleDemoLogin = () => {
-    // Connexion immédiate avec un token fictif pour la démonstration
-    onLoginSuccess("demo_token_artisan_mode");
-  };
-
   return (
     <main className="demande-devis">
       <header className="demande-devis__header">
@@ -74,14 +69,6 @@ function Login({ onLoginSuccess }) {
           {loading ? "Vérification..." : "Se connecter"}
         </button>
 
-        <button
-          type="button"
-          onClick={handleDemoLogin}
-          className="demande-devis__submit"
-          style={{ marginTop: "1rem", backgroundColor: "#3b82f6", cursor: "pointer" }}
-        >
-          Accès Démo (1-Clic)
-        </button>
       </form>
     </main>
   );
