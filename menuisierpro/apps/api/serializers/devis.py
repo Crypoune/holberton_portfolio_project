@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from apps.menuisier.models import Devis
+from .client_prospect import ClientProspectSerializer
 
 
 class DevisSerializer(serializers.ModelSerializer):
+    client = ClientProspectSerializer(read_only=True)
+
     class Meta:
         model  = Devis
         fields = [
