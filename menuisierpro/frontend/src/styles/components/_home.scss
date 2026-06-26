@@ -1,119 +1,279 @@
 @use "../variables" as *;
 @use "../mixins" as *;
 
-.accueil {
-  display: flex;
-  flex-direction: column;
-
+.home {
+  // HERO
   &__hero {
-    text-align: center;
-    padding: 3rem 1.5rem 2.5rem;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    background-image: url("https://picsum.photos/seed/atelier-hero/1600/1000");
+    background-size: cover;
+    background-position: center;
+    padding: 3rem 1.5rem;
 
-    h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      line-height: 1.25;
-      margin-bottom: 0.75rem;
-
-      @include md {
-        font-size: 2.5rem;
-      }
+    @include lg {
+      padding: 4rem;
     }
   }
 
-  &__hero-subtitle {
-    color: #6b7280;
+  &__hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(31, 41, 55, 0.95) 0%,
+      rgba(31, 41, 55, 0.6) 50%,
+      rgba(31, 41, 55, 0.3) 100%
+    );
+  }
+
+  &__hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+  }
+
+  &__hero-tag {
+    display: block;
+    color: $color-orange;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+
+  &__hero-content h1 {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+
+    @include md {
+      font-size: 3rem;
+    }
+  }
+
+  &__hero-content p {
+    color: $color-text-light;
     font-size: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
+    max-width: 550px;
   }
 
-  &__hero-trust {
-    font-size: 0.8rem;
-    color: #9ca3af;
-    margin-top: 0.75rem;
-  }
-
-  &__services {
-    background: #f3f4f6;
-    padding: 2rem 1.5rem;
+  &__hero-actions {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
+    max-width: 320px;
 
     @include md {
       flex-direction: row;
+      max-width: none;
     }
   }
 
-  &__realisations,
+  &__hero-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  // SERVICES BAND
+  &__services {
+    background: $color-orange;
+    padding: 3rem 1.5rem;
+    text-align: center;
+
+    @include lg {
+      padding: 4rem 2rem;
+    }
+  }
+
+  &__services-tag {
+    display: block;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 2rem;
+  }
+
+  &__services-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    @include lg {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  // PORTFOLIO PREVIEW
+  &__portfolio {
+    padding: 3rem 1.5rem;
+
+    @include lg {
+      padding: 4rem 2rem;
+    }
+  }
+
+  &__section-tag {
+    display: block;
+    color: $color-orange;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+
+  &__portfolio h2,
+  &__temoignages h2,
+  &__trust h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: $color-charcoal;
+    margin-bottom: 2rem;
+  }
+
+  // TESTIMONIALS
   &__temoignages {
-    padding: 2.5rem 1.5rem;
+    background: $color-charcoal;
+    padding: 3rem 1.5rem;
+
+    @include lg {
+      padding: 4rem 2rem;
+    }
+
+    h2 {
+      color: #fff;
+    }
+  }
+
+  // TRUST
+  &__trust {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    background: #f9fafb;
+
+    @include lg {
+      padding: 4rem 2rem;
+    }
 
     h2 {
       text-align: center;
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
     }
   }
 
+  // CTA
   &__cta {
-    background: #fef3c7;
+    background: $color-amber-soft;
     text-align: center;
-    padding: 3rem 1.5rem;
+    padding: 4rem 1.5rem;
 
     h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1.25rem;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: $color-charcoal;
+      margin: 0.75rem 0 1rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
-  }
-
-  &__cta-sub {
-    margin-top: 0.75rem;
-    font-size: 0.875rem;
-    color: #92400e;
-  }
-
-  &__footer {
-    text-align: center;
-    padding: 2rem 1.5rem;
 
     p {
-      font-weight: 600;
+      color: #6b7280;
+      max-width: 500px;
+      margin: 0 auto 1.75rem;
     }
+  }
+
+  // FOOTER
+  &__footer {
+    background: $color-charcoal;
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    strong {
+      color: #fff;
+      letter-spacing: 0.05em;
+      font-size: 1rem;
+    }
+  }
+
+  &__footer-subtitle {
+    color: $color-orange;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+
+  &__footer-links {
+    color: $color-text-muted;
+    font-size: 0.85rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $color-charcoal-light;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 400px;
   }
 
   &__footer-copy {
-    font-weight: 400 !important;
-    font-size: 0.8rem;
-    color: #9ca3af;
-    margin-top: 0.25rem;
+    color: $color-text-muted;
+    font-size: 0.75rem;
   }
 }
 
+// SERVICE CARD (sur fond orange)
 .service-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
   flex: 1;
+  text-align: center;
 
-  &__icon {
-    display: block;
-    margin-bottom: 0.75rem;
-    color: #f59e0b;
+  &__icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin: 0 auto 1rem;
   }
 
   h3 {
-    font-size: 1rem;
+    color: #fff;
+    font-size: 1.1rem;
     margin-bottom: 0.5rem;
   }
   p {
-    font-size: 0.875rem;
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+    max-width: 280px;
+    margin: 0 auto;
   }
 }
 
-.realisations-grid {
+// PORTFOLIO CARD
+.portfolio-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
@@ -123,51 +283,105 @@
   }
 }
 
-.realisation-card {
-  img {
-    width: 100%;
-    aspect-ratio: 4/3;
-    object-fit: cover;
-    border-radius: 0.75rem;
-    margin-bottom: 0.5rem;
+.portfolio-card {
+  aspect-ratio: 4/3;
+  border-radius: 0.75rem;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent 60%);
   }
 
-  p {
-    font-size: 0.875rem;
-    text-align: center;
-    color: #374151;
+  span {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
   }
 }
 
-.temoignages-list {
-  display: flex;
-  flex-direction: column;
+// TESTIMONIAL CARD
+.temoignages-grid {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 1rem;
-  max-width: 700px;
-  margin: 0 auto;
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .temoignage-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: $color-charcoal-light;
   border-radius: 0.75rem;
   padding: 1.5rem;
-
-  h4 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
 
   &__stars {
     display: flex;
     gap: 0.125rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
   }
 
   p {
+    color: $color-text-light;
     font-size: 0.9rem;
-    color: #6b7280;
-    font-style: italic;
     line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+
+  &__author {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.75rem;
+
+    strong {
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    span {
+      color: $color-text-muted;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// TRUST ITEMS
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+
+  @include lg {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: $color-orange;
+
+  strong {
+    color: $color-charcoal;
+    font-size: 1rem;
+  }
+  span {
+    color: #9ca3af;
+    font-size: 0.8rem;
   }
 }

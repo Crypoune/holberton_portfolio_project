@@ -10,6 +10,11 @@ function Dashboard() {
 
   return (
     <main className="dashboard">
+      <header className="dashboard__header">
+        <span className="dashboard__tag">ESPACE ARTISAN</span>
+        <h1>Tableau de bord</h1>
+      </header>
+
       <div className="dashboard__stats">
         <StatCard label="Total devis" value={stats.total} colorClass="black" />
         <StatCard

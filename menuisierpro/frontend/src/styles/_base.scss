@@ -22,6 +22,22 @@
   flex-direction: column;
   gap: 2rem;
 
+  &__header {
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: $color-charcoal;
+      margin-top: 0.25rem;
+    }
+  }
+
+  &__tag {
+    color: $color-orange;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
   &__stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

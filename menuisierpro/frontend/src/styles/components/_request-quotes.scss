@@ -1,13 +1,13 @@
 @use "../variables" as *;
 @use "../mixins" as *;
 
-.demande-devis {
+.request-quotes {
   padding: 1.5rem;
   max-width: 600px;
   margin: 0 auto;
 
   @include lg {
-    padding: 2rem;
+    padding: 3rem 2rem;
   }
 
   &__header {
@@ -16,8 +16,11 @@
 
     h1 {
       font-size: 1.5rem;
+      font-weight: 800;
+      color: $color-charcoal;
       margin-bottom: 0.5rem;
     }
+
     p {
       color: #6b7280;
       font-size: 0.9rem;
@@ -31,15 +34,18 @@
   }
 
   &__error {
-    color: #dc2626;
+    color: $color-red;
     font-size: 0.875rem;
     text-align: center;
+    background: #fee2e2;
+    padding: 0.625rem;
+    border-radius: 0.5rem;
   }
 
   &__submit {
-    background-color: #22c55e;
+    background-color: $color-green;
     color: #fff;
-    font-weight: 600;
+    font-weight: 700;
     padding: 0.875rem;
     border-radius: 0.75rem;
     font-size: 1rem;
@@ -60,11 +66,25 @@
 
     h1 {
       font-size: 1.75rem;
+      font-weight: 800;
+      color: $color-charcoal;
       margin-bottom: 1rem;
     }
     p {
       color: #6b7280;
     }
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: $color-amber-soft;
+    color: $color-orange;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
   }
 }
 
@@ -75,12 +95,15 @@ fieldset {
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
+  background: #fff;
 
   legend {
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
     padding: 0 0.5rem;
-    color: #1f2937;
+    color: $color-orange;
+    text-transform: uppercase;
   }
 }
 
@@ -102,6 +125,7 @@ select {
 
   &:focus {
     outline: none;
-    border-color: #f59e0b;
+    border-color: $color-orange;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
   }
 }
