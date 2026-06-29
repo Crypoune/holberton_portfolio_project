@@ -12,6 +12,12 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
   //const [token, setToken] = useState("fake-token-visual-testing");
 
+  const handleLoginSuccess = (newToken) => {
+    localStorage.setItem("token", newToken);
+    setToken(newToken);
+    setActivePage("dashboard");
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setToken(null);
@@ -34,12 +40,12 @@ function App() {
           (token ? (
             <Dashboard token={token} />
           ) : (
-            <Login onNavigate={setActivePage} onLogin={setToken} />
+            <Login onNavigate={setActivePage} onLoginSuccess={handleLoginSuccess} />
           ))}
         {activePage === "portfolio" && <Portfolio />}
         {activePage === "devis" && <RequestQuote />}
         {activePage === "login" && (
-          <Login onNavigate={setActivePage} onLogin={setToken} />
+          <Login onNavigate={setActivePage} onLoginSuccess={handleLoginSuccess} />
         )}
       </div>
     </div>
