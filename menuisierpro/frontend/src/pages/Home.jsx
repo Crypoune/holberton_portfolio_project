@@ -1,4 +1,11 @@
 import WhatsAppButton from "../components/ui/WhatsAppButton";
+import heroBackground from "../assets/hero-background.webp";
+import cuisine2 from "../assets/portfolio/cuisine2.webp";
+import armoire from "../assets/portfolio/armoire.webp";
+import dressing2 from "../assets/portfolio/dressing2.webp";
+import table from "../assets/portfolio/table.webp";
+import fauteuil from "../assets/portfolio/fauteuil.webp";
+import bureau from "../assets/portfolio/bureau.webp";
 import {
   Hammer,
   ChefHat,
@@ -29,36 +36,12 @@ const SERVICES = [
 ];
 
 const REALISATIONS = [
-  {
-    id: 1,
-    label: "Cuisine sur mesure",
-    img: "https://picsum.photos/seed/cuisine-sur-mesure/500/400",
-  },
-  {
-    id: 2,
-    label: "Bar & Cave à vins",
-    img: "https://picsum.photos/seed/bar-cave/500/400",
-  },
-  {
-    id: 3,
-    label: "Atelier & Ponçage",
-    img: "https://picsum.photos/seed/atelier/500/400",
-  },
-  {
-    id: 4,
-    label: "Buffet vitré",
-    img: "https://picsum.photos/seed/buffet/500/400",
-  },
-  {
-    id: 5,
-    label: "Cuisine rustique",
-    img: "https://picsum.photos/seed/cuisine-rustique/500/400",
-  },
-  {
-    id: 6,
-    label: "Outils de maître",
-    img: "https://picsum.photos/seed/outils/500/400",
-  },
+  { id: 1, label: "Cuisine sur mesure", img: cuisine2 },
+  { id: 2, label: "Armoire sur mesure", img: armoire },
+  { id: 3, label: "Bibliothèque ouverte", img: dressing2 },
+  { id: 4, label: "Table artisanale", img: table },
+  { id: 5, label: "Fauteuil en bois", img: fauteuil },
+  { id: 6, label: "Bureau sur mesure", img: bureau },
 ];
 
 const TEMOIGNAGES = [
@@ -99,7 +82,10 @@ const TRUST = [
 function Home() {
   return (
     <main className="home">
-      <section className="home__hero">
+      <section
+        className="home__hero"
+        style={{ backgroundImage: `url(${heroBackground})` }}
+      >
         <div className="home__hero-overlay" />
         <div className="home__hero-content">
           <span className="home__hero-tag">ARTISAN MENUISIER DEPUIS 2010</span>
