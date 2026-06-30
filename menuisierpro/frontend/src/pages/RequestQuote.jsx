@@ -19,12 +19,12 @@ const MATERIAUX = [
 
 function RequestQuote() {
   const [form, setForm] = useState({
-    nom: "",
-    telephone_whatsapp: "",
-    email: "",
-    type_meuble: "",
-    dimensions_approximatives: "",
-    materiau: "",
+    nom: "Rakoto Michel",
+    telephone_whatsapp: "261340001234",
+    email: "michel@gmail.com",
+    type_meuble: "Table",
+    dimensions_approximatives: "200cm x 100cm x 75cm",
+    materiau: "Palissandre",
   });
   const [status, setStatus] = useState("idle"); // idle | envoi | succes | erreur
 
