@@ -36,8 +36,11 @@ function Portfolio() {
 
       <div className="portfolio__grid">
         {projectsFilters.map((project) => (
-          <div key={project.id} className="project-card">
-            <img src={project.image_principale} alt={project.titre} />
+          <div
+            key={project.id}
+            className="project-card"
+            style={{ backgroundImage: `url(${project.image_principale})` }}
+          >
             <div className="project-card__body">
               <h3>{project.titre}</h3>
               <p className="project-card__meta">

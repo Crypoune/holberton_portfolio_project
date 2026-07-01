@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
-function Header({ onNavigate }) {
+function Header({ onNavigate, isConnected }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
     { id: "accueil", label: "Accueil" },
-    { id: "dashboard", label: "Tableau de bord" },
+    { id: "dashboard", label: isConnected ? "Tableau de bord" : "Connexion" },
     { id: "portfolio", label: "Portfolio" },
     { id: "devis", label: "Demander un devis" },
   ];
@@ -17,22 +17,22 @@ function Header({ onNavigate }) {
   };
 
   return (
-    <header className="header">
-      <div className="header__top">
-        <span className="header__brand">Geppetto's House</span>
-        <button
-          className="header__burger"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+    <header className="navbar">
+      <div className="navbar__brand" onClick={() => handleNav("accueil")}>
+        <span className="navbar__title">GEPPETTO'S HOUSE</span>
+        <span className="navbar__subtitle">MENUISERIE · MADAGASCAR</span>
       </div>
+
+      <button className="navbar__burger" onClick={() => setMenuOpen(!menuOpen)}>
+        {menuOpen ? <X size={22} /> : <Menu size={22} />}
+      </button>
+
       {menuOpen && (
-        <nav className="header__menu">
+        <nav className="navbar__mobile-menu">
           {links.map((link) => (
             <button
               key={link.id}
-              className="header__menu-link"
+              className="navbar__mobile-link"
               onClick={() => handleNav(link.id)}
             >
               {link.label}

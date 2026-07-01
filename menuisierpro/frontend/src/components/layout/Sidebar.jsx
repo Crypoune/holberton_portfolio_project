@@ -56,6 +56,13 @@ function Sidebar({ activePage, onNavigate, isConnected, onLogout }) {
           </button>
         )}
       </nav>
+
+      {isConnected && (
+        <button className="sidebar__logout" onClick={onLogout}>
+          <LogOut size={18} />
+          Déconnexion
+        </button>
+      )}
     </aside>
   );
 }

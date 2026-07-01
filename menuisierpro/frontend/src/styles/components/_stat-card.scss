@@ -1,3 +1,5 @@
+@use "../variables" as *;
+
 .stat-card {
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -13,16 +15,16 @@
     line-height: 1;
 
     &.orange {
-      color: #f59e0b;
+      color: $color-orange;
     }
     &.green {
-      color: #22c55e;
+      color: $color-green;
     }
     &.red {
-      color: #ef4444;
+      color: $color-red;
     }
     &.black {
-      color: #1f2937;
+      color: $color-charcoal;
     }
   }
 
