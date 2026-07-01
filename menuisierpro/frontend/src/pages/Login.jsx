@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Lock } from "lucide-react";
 
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
@@ -35,16 +34,13 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <main className="request-quotes">
-      <header className="request-quotes__header">
-        <div className="request-quotes__icon">
-          <Lock size={24} />
-        </div>
+    <main className="demande-devis">
+      <header className="demande-devis__header">
         <h1>Espace Artisan</h1>
         <p>Connectez-vous pour accéder au carnet de commandes</p>
       </header>
 
-      <form className="request-quotes__form" onSubmit={handleSubmit}>
+      <form className="demande-devis__form" onSubmit={handleSubmit}>
         <fieldset>
           <legend>Connexion sécurisée</legend>
 
@@ -67,15 +63,12 @@ function Login({ onLoginSuccess }) {
           />
         </fieldset>
 
-        {error && <p className="request-quotes__error">{error}</p>}
+        {error && <p className="demande-devis__error">{error}</p>}
 
-        <button
-          type="submit"
-          className="request-quotes__submit"
-          disabled={loading}
-        >
+        <button type="submit" className="demande-devis__submit" disabled={loading}>
           {loading ? "Vérification..." : "Se connecter"}
         </button>
+
       </form>
     </main>
   );
