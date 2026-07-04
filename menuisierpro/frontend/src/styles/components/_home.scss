@@ -140,7 +140,7 @@
   }
 
   &__portfolio h2,
-  &__temoignages h2,
+  &__feedbacks h2,
   &__trust h2 {
     font-size: 1.75rem;
     font-weight: 800;
@@ -149,7 +149,7 @@
   }
 
   // TESTIMONIALS
-  &__temoignages {
+  &__feedbacks {
     background: $color-charcoal;
     padding: 3rem 1.5rem;
 
@@ -310,7 +310,7 @@
 }
 
 // TESTIMONIAL CARD
-.temoignages-grid {
+.feedbacks-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
@@ -320,7 +320,7 @@
   }
 }
 
-.temoignage-card {
+.feedback-card {
   background: $color-charcoal-light;
   border-radius: 0.75rem;
   padding: 1.5rem;

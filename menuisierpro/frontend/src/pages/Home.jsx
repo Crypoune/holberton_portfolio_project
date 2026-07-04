@@ -79,7 +79,7 @@ const TRUST = [
   { Icon: Phone, value: "Suivi personnalisé", label: "de A à Z" },
 ];
 
-function Home() {
+function Home({ onNavigate }) {
   return (
     <main className="home">
       <section
@@ -100,7 +100,10 @@ function Home() {
               message="Bonjour, je souhaite demander un devis."
               label="Demander un devis WhatsApp"
             />
-            <button className="home__hero-secondary">
+            <button
+              className="home__hero-secondary"
+              onClick={() => onNavigate("portfolio")}
+            >
               Voir nos réalisations
             </button>
           </div>
@@ -138,19 +141,19 @@ function Home() {
         </div>
       </section>
 
-      <section className="home__temoignages">
+      <section className="home__feedbacks">
         <span className="home__section-tag">AVIS CLIENTS</span>
         <h2>Ce qu'ils en disent</h2>
-        <div className="temoignages-grid">
+        <div className="feedbacks-grid">
           {TEMOIGNAGES.map((t) => (
-            <div key={t.nom} className="temoignage-card">
-              <div className="temoignage-card__stars">
+            <div key={t.nom} className="feedback-card">
+              <div className="feedback-card__stars">
                 {Array.from({ length: t.note }).map((_, i) => (
                   <Star key={i} size={16} fill="#f59e0b" color="#f59e0b" />
                 ))}
               </div>
               <p>"{t.texte}"</p>
-              <div className="temoignage-card__author">
+              <div className="feedback-card__author">
                 <strong>{t.nom}</strong>
                 <span>{t.ville}</span>
               </div>

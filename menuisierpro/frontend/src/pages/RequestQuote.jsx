@@ -51,7 +51,7 @@ function RequestQuote() {
 
   if (status === "succes") {
     return (
-      <main className="demande-devis demande-devis--succes">
+      <main className="request-quote request-quote--succes">
         <h1>Merci !</h1>
         <p>
           Votre demande de devis a bien été envoyée. Nous vous répondrons sous
@@ -62,13 +62,13 @@ function RequestQuote() {
   }
 
   return (
-    <main className="demande-devis">
-      <header className="demande-devis__header">
+    <main className="request-quote">
+      <header className="request-quote__header">
         <h1>Demander un devis gratuit</h1>
         <p>Parlez-nous de votre projet, on vous répond rapidement</p>
       </header>
 
-      <form className="demande-devis__form" onSubmit={handleSubmit}>
+      <form className="request-quote__form" onSubmit={handleSubmit}>
         <fieldset>
           <legend>Vos coordonnées</legend>
 
@@ -151,14 +151,14 @@ function RequestQuote() {
         </fieldset>
 
         {status === "erreur" && (
-          <p className="demande-devis__error">
+          <p className="request-quote__error">
             Une erreur est survenue, réessayez.
           </p>
         )}
 
         <button
           type="submit"
-          className="demande-devis__submit"
+          className="request-quote__submit"
           disabled={status === "envoi"}
         >
           {status === "envoi" ? "Envoi en cours..." : "Envoyer ma demande"}
