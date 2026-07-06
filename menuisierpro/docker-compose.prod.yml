@@ -1,0 +1,51 @@
+# --- docker-compose.prod.yml ---
+# Différence avec ton docker-compose.yml de dev :
+# - "web" utilise Dockerfile.prod (Gunicorn) au lieu de runserver
+# - un service "nginx" apparaît devant, c'est lui qui reçoit le trafic
+# - plus de bind-mount du code source (image immuable, plus sûr)
+# - un volume nommé pour la base de données pour qu'elle survive à un
+#   "docker compose down"
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - media_data:/app/media
+      - static_data:/app/.dist/static
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_data:/app/.dist/static:ro
+      - media_data:/app/media:ro
+      # décommente une fois Certbot en place :
+      # - ./certbot/conf:/etc/letsencrypt:ro
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  media_data:
+  static_data:

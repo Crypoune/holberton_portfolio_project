@@ -28,9 +28,20 @@ class DevisCreationSerializer(serializers.ModelSerializer):
     Le visiteur remplit type_meuble, dimensions, materiau.
     message_whatsapp_genere est construit dans la view avant save().
     """
+    site_web = serializers.CharField(required=False, allow_blank=True, write_only=True)
+ 
     class Meta:
         model  = Devis
-        fields = ['type_meuble', 'dimensions_approximatives', 'materiau']
+        fields = ['type_meuble', 'dimensions_approximatives', 'materiau', 'site_web']
+ 
+    def validate_site_web(self, value):
+        if value:
+            # On ne dit jamais explicitement "bot détecté" dans le message
+            # d'erreur : ça donnerait à un attaquant l'info qu'il doit
+            # rendre son bot plus subtil. Un message générique suffit.
+            raise serializers.ValidationError("Une erreur est survenue.")
+        return value
+ 
 
 
 class DevisStatutSerializer(serializers.ModelSerializer):
