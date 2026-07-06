@@ -34,13 +34,13 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <main className="demande-devis">
-      <header className="demande-devis__header">
+    <main className="request-quote">
+      <header className="request-quote__header">
         <h1>Espace Artisan</h1>
         <p>Connectez-vous pour accéder au carnet de commandes</p>
       </header>
 
-      <form className="demande-devis__form" onSubmit={handleSubmit}>
+      <form className="request-quote__form" onSubmit={handleSubmit}>
         <fieldset>
           <legend>Connexion sécurisée</legend>
 
@@ -63,12 +63,15 @@ function Login({ onLoginSuccess }) {
           />
         </fieldset>
 
-        {error && <p className="demande-devis__error">{error}</p>}
+        {error && <p className="request-quote__error">{error}</p>}
 
-        <button type="submit" className="demande-devis__submit" disabled={loading}>
+        <button
+          type="submit"
+          className="request-quote__submit"
+          disabled={loading}
+        >
           {loading ? "Vérification..." : "Se connecter"}
         </button>
-
       </form>
     </main>
   );

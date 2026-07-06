@@ -8,11 +8,9 @@
 
   &__content {
     flex: 1;
-    padding: 1.5rem;
 
     @include lg {
       margin-left: $sidebar-width;
-      padding: 2rem;
     }
   }
 }
