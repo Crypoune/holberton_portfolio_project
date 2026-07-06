@@ -5,7 +5,7 @@
 # sauvegardes (une rotation simple pour ne pas remplir le disque à l'infini).
 #
 # COMMENT LE PLANIFIER :
-# Sur ton serveur (ou dans un conteneur dédié), ajoute une tâche cron qui
+# Sur serveur (ou dans un conteneur dédié), ajouter une tâche cron qui
 # exécute ce script une fois par jour :
 #   crontab -e
 #   0 3 * * * /app/backup.sh >> /var/log/menuisierpro-backup.log 2>&1
