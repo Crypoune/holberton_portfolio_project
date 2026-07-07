@@ -21,6 +21,17 @@ class Devis(models.Model):
     type_meuble               = models.CharField(max_length=150)         # ex : "Cuisine équipée"
     dimensions_approximatives = models.CharField(max_length=200, blank=True)  # ex : "3m x 2.5m"
     materiau                  = models.CharField(max_length=100, blank=True)   # ex : "Chêne massif"
+    code_postal               = models.CharField(max_length=10, blank=True)
+    ville                     = models.CharField(max_length=100, blank=True)
+    type_client               = models.CharField(max_length=50, blank=True)
+    type_travaux              = models.CharField(max_length=50, blank=True)
+    type_produit              = models.CharField(max_length=100, blank=True)
+    quantite                  = models.IntegerField(default=1)
+    budget                    = models.CharField(max_length=100, blank=True)
+    delai                     = models.CharField(max_length=100, blank=True)
+    description               = models.TextField(blank=True)
+    photo_plan                = models.FileField(upload_to="devis_fichiers/", null=True, blank=True)
+    ip_address                = models.GenericIPAddressField(null=True, blank=True)
     message_whatsapp_genere   = models.TextField(blank=True)  # message prêt à copier/envoyer
     date_creation             = models.DateTimeField(auto_now_add=True)
     statut                    = models.CharField(
