@@ -33,7 +33,7 @@ function QuotesCard({ quotes }) {
     <div className="devis-card">
       <div className="devis-card__header">
         <div>
-          <h3 className="devis-card__nom">{client?.name}</h3>
+          <h3 className="devis-card__nom">{client?.name || client?.nom}</h3>
           <p className="devis-card__meuble">{type_meuble}</p>
         </div>
         <Badge statut={statut} />
@@ -69,7 +69,7 @@ function QuotesCard({ quotes }) {
             telephone={client?.telephone_whatsapp}
             message={
               message_whatsapp_genere ||
-              `Bonjour ${client?.name}, je vous relance concernant votre devis pour : ${type_meuble}.`
+              `Bonjour ${client?.name || client?.nom}, je vous relance concernant votre devis pour : ${type_meuble}.`
             }
             label={button}
           />

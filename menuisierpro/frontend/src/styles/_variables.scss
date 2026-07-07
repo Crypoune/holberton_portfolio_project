@@ -1,9 +1,20 @@
 // _variables.scss
-$color-orange: #f59e0b; // En attente
-$color-green: #22c55e; // Accepté
-$color-red: #ef4444; // À relancer
 
-$breakpoint-md: 768px; // tablet
-$breakpoint-lg: 1024px; // desktop sidebar
+// Couleurs existantes (statuts devis)
+$color-orange: #f59e0b;
+$color-green: #22c55e;
+$color-red: #ef4444;
 
-$sidebar-width: 220px;
+// Nouvelles couleurs — identité sombre
+$color-charcoal: #1f2937;
+$color-charcoal-light: #374151; // cards sur fond sombre
+$color-amber-soft: #fef3c7; // CTA final, fond clair chaud
+$color-amber-soft-text: #92400e;
+
+$color-text-light: #e5e7eb; // texte clair sur fond sombre
+$color-text-muted: #9ca3af; // texte secondaire
+
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+
+$sidebar-width: 240px;
