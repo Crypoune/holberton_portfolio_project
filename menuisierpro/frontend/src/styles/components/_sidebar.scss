@@ -9,24 +9,39 @@
     flex-direction: column;
     width: $sidebar-width;
     min-height: 100vh;
-    background: #fff;
-    border-right: 1px solid #e5e7eb;
-    padding: 2rem 1rem;
+    background: $color-charcoal;
+    padding: 2rem 1.25rem;
     position: fixed;
     top: 0;
     left: 0;
-    gap: 2rem;
+    gap: 2.5rem;
+    transform: translateX(0);
+    transition: transform 0.25s ease;
   }
 
-  &__brand h1 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1f2937;
+  &--closed {
+    @include lg {
+      transform: translateX(-100%);
+    }
   }
 
-  &__brand p {
-    font-size: 0.75rem;
-    color: #9ca3af;
+  &__brand {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+
+  &__subtitle {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: $color-orange;
     margin-top: 0.25rem;
   }
 
@@ -34,6 +49,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    flex: 1;
   }
 
   &__link {
@@ -43,7 +59,7 @@
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     font-size: 0.9rem;
-    color: #6b7280;
+    color: $color-text-light;
     width: 100%;
     text-align: left;
     transition: background 0.15s ease;
@@ -53,67 +69,109 @@
     }
 
     &:hover {
-      background: #f3f4f6;
-      color: #1f2937;
+      background: $color-charcoal-light;
     }
     &--active {
-      background: #fef3c7;
-      color: #d97706;
+      background: $color-orange;
+      color: $color-charcoal;
       font-weight: 600;
+    }
+  }
+
+  &__logout {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: $color-text-muted;
+    font-size: 0.85rem;
+    border-top: 1px solid $color-charcoal-light;
+    padding-top: 1.25rem;
+
+    &:hover {
+      color: #fff;
     }
   }
 }
 
-.header {
+// Bouton toggle pour afficher/cacher la sidebar en desktop
+.sidebar-toggle {
+  display: none;
+
+  @include lg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 200;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    background: $color-charcoal;
+    color: #fff;
+
+    &:hover {
+      background: $color-charcoal-light;
+    }
+  }
+}
+
+.navbar {
   display: flex;
-  flex-direction: column;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
   position: sticky;
   top: 0;
   z-index: 100;
+  background: rgba(31, 41, 55, 0.95);
 
   @include lg {
     display: none;
   }
 
-  &__top {
+  &__brand {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.25rem;
+    flex-direction: column;
+    cursor: pointer;
   }
 
-  &__brand {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #1f2937;
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+
+  &__subtitle {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: $color-orange;
   }
 
   &__burger {
-    display: flex;
-    align-items: center;
-    color: #1f2937;
+    color: #fff;
   }
 
-  &__menu {
+  &__mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $color-charcoal;
     display: flex;
     flex-direction: column;
-    padding: 0.5rem 1rem 1rem;
-    gap: 0.25rem;
-    border-top: 1px solid #e5e7eb;
+    padding: 0.5rem 1.5rem 1rem;
   }
 
-  &__menu-link {
-    padding: 0.75rem 1rem;
+  &__mobile-link {
+    padding: 0.75rem 0;
     text-align: left;
+    color: $color-text-light;
     font-size: 0.9rem;
-    color: #374151;
-    border-radius: 0.5rem;
-    width: 100%;
-
-    &:hover {
-      background: #f3f4f6;
-    }
+    border-bottom: 1px solid $color-charcoal-light;
   }
 }
