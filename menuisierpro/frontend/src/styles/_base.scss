@@ -8,6 +8,7 @@
 
   &__content {
     flex: 1;
+    min-width: 0;
     transition: margin-left 0.25s ease;
 
     @include lg {
