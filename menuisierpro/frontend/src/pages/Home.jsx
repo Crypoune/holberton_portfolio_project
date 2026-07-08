@@ -1,4 +1,5 @@
 import WhatsAppButton from "../components/ui/WhatsAppButton";
+import Marquee from "../components/ui/Marquee";
 import heroBackground from "../assets/hero-background.webp";
 import banc from "../assets/portfolio/banc.webp";
 import armoire from "../assets/portfolio/armoire.webp";
@@ -86,25 +87,28 @@ function Home({ onNavigate }) {
       <section className="home__portfolio">
         <span className="home__section-tag">PORTFOLIO</span>
         <h2>Nos réalisations</h2>
-        <div className="portfolio-grid">
-          {REALISATIONS.map((r) => (
+        <Marquee
+          items={REALISATIONS}
+          speed={35}
+          renderItem={(r) => (
             <div
-              key={r.id}
               className="portfolio-card"
               style={{ backgroundImage: `url(${r.img})` }}
             >
               <span>{r.label}</span>
             </div>
-          ))}
-        </div>
+          )}
+        />
       </section>
 
       <section className="home__feedbacks">
         <span className="home__section-tag">AVIS CLIENTS</span>
         <h2>Ce qu'ils en disent</h2>
-        <div className="feedbacks-grid">
-          {TEMOIGNAGES.map((t) => (
-            <div key={t.nom} className="feedback-card">
+        <Marquee
+          items={TEMOIGNAGES}
+          speed={40}
+          renderItem={(t) => (
+            <div className="feedback-card">
               <div className="feedback-card__stars">
                 {Array.from({ length: t.note }).map((_, i) => (
                   <Star key={i} size={16} fill="#f59e0b" color="#f59e0b" />
@@ -116,8 +120,8 @@ function Home({ onNavigate }) {
                 <span>{t.ville}</span>
               </div>
             </div>
-          ))}
-        </div>
+          )}
+        />
       </section>
 
       <section className="home__trust">
