@@ -45,7 +45,7 @@
 
   &__hero-content h1 {
     color: #fff;
-    font-size: 2rem;
+    font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem);
     font-weight: 800;
     line-height: 1.15;
     margin-bottom: 1rem;
@@ -109,7 +109,7 @@
   &__portfolio h2,
   &__feedbacks h2,
   &__trust h2 {
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
     font-weight: 800;
     color: $color-charcoal;
     margin-bottom: 2rem;
@@ -204,7 +204,8 @@
     width: 100%;
     max-width: 500px;
 
-    button {
+    button,
+    a {
       color: $color-text-muted;
       font-size: 0.85rem;
       font-weight: 500;

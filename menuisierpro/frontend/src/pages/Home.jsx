@@ -157,11 +157,13 @@ function Home({ onNavigate }) {
 
         <nav className="home__footer-links">
           <button onClick={() => onNavigate("devis")}>Demander un devis</button>
-          <WhatsAppButton
-            telephone="261340000000"
-            message="Bonjour, j'aimerais discuter d'un projet."
-            label="WhatsApp"
-          />
+          <a
+            href="https://wa.me/261340000000?text=Bonjour%2C%20j%27aimerais%20discuter%20d%27un%20projet."
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp
+          </a>
           <button onClick={() => onNavigate("apropos")}>À propos</button>
           <button onClick={() => onNavigate("mentions-legales")}>
             Mentions légales
