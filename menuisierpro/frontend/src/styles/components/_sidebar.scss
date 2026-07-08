@@ -109,11 +109,11 @@
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 0.5rem;
-    background: $color-charcoal;
     color: #fff;
+    transition: transform 0.2s ease;
 
     &:hover {
-      background: $color-charcoal-light;
+      transform: scale(1.15);
     }
   }
 }
