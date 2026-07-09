@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const DEFAULT_FILTERS = {
   materiau: "",
@@ -14,10 +14,9 @@ function useQuotes(token, filters = DEFAULT_FILTERS) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchDashboard = useCallback(() => {
     if (!token) return;
 
-    let cancelled = false;
     setLoading(true);
     setError(null);
 
@@ -26,14 +25,13 @@ function useQuotes(token, filters = DEFAULT_FILTERS) {
       "Content-Type": "application/json",
     };
 
-    // On ne garde que les filtres non vides dans l'URL
     const params = new URLSearchParams();
     if (filters.materiau)    params.set("materiau", filters.materiau);
     if (filters.type_meuble) params.set("type_meuble", filters.type_meuble);
     if (filters.statut)      params.set("statut", filters.statut);
     params.set("ordering", filters.ordering || "-date_creation");
 
-    Promise.all([
+    return Promise.all([
       fetch(`/api/v1/devis/?${params.toString()}`, { headers }).then((res) => {
         if (!res.ok) throw new Error(`Erreur devis (${res.status})`);
         return res.json();
@@ -44,32 +42,60 @@ function useQuotes(token, filters = DEFAULT_FILTERS) {
       }),
     ])
       .then(([devisPage, statsData]) => {
-        if (cancelled) return;
-
         setQuotes(Array.isArray(devisPage.results) ? devisPage.results : devisPage);
-
         setStats({
           total: statsData.devis.total,
           enAttente: statsData.devis.en_attente,
           acceptes: statsData.devis.acceptes,
           aRelancer: statsData.devis.a_relancer,
         });
-
         setRecentClients(statsData.dernieres_inscriptions || []);
       })
       .catch((err) => {
-        if (cancelled) return;
         console.error("Erreur de récupération du dashboard :", err);
         setError(err.message);
       })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => { cancelled = true; };
+      .finally(() => setLoading(false));
   }, [token, filters.materiau, filters.type_meuble, filters.statut, filters.ordering]);
 
-  return { quotes, stats, recentClients, loading, error };
+  useEffect(() => {
+    let cancelled = false;
+    fetchDashboard()?.then(() => {
+      if (cancelled) return;
+    });
+    return () => { cancelled = true; };
+  }, [fetchDashboard]);
+
+  const deleteQuote = useCallback(
+    async (id) => {
+      const previousQuotes = quotes;
+      // Suppression optimiste : on retire tout de suite la carte de l'écran,
+      // pour un retour instantané, quitte à la remettre si l'API échoue.
+      setQuotes((current) => current.filter((q) => q.id !== id));
+
+      try {
+        const res = await fetch(`/api/v1/devis/${id}/`, {
+          method: "DELETE",
+          headers: { Authorization: `Token ${token}` },
+        });
+
+        if (!res.ok && res.status !== 204) {
+          throw new Error(`Erreur suppression (${res.status})`);
+        }
+
+        // On rafraîchit les stats (les compteurs doivent refléter la suppression)
+        fetchDashboard();
+        return { success: true };
+      } catch (err) {
+        console.error("Erreur lors de la suppression du devis :", err);
+        setQuotes(previousQuotes); // on annule l'optimisme si ça a échoué
+        return { success: false, message: err.message };
+      }
+    },
+    [token, quotes, fetchDashboard]
+  );
+
+  return { quotes, stats, recentClients, loading, error, deleteQuote };
 }
 
 export default useQuotes;

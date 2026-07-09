@@ -6,7 +6,7 @@ import useQuotes, { DEFAULT_FILTERS } from "../hooks/useQuotes";
 
 function Dashboard({ token }) {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const { quotes, stats, recentClients, loading, error } = useQuotes(token, filters);
+  const { quotes, stats, recentClients, loading, error, deleteQuote } = useQuotes(token, filters);
 
   return (
     <main className="dashboard">
@@ -28,7 +28,9 @@ function Dashboard({ token }) {
 
         {loading && <p className="dashboard__loading">Chargement...</p>}
         {error && <p className="dashboard__error">Erreur : {error}</p>}
-        {!loading && !error && <QuotesList quotes={quotes} />}
+        {!loading && !error && (
+          <QuotesList quotes={quotes} onDelete={deleteQuote} />
+        )}
       </section>
 
       <section className="dashboard__section">
