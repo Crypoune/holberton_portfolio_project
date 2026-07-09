@@ -143,3 +143,20 @@
     border-bottom: 1px solid $color-charcoal-light;
   }
 }
+.dashboard__recent-clients {
+  list-style: none;
+  padding: 0;
+
+  &-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  &-empty {
+    color: #9ca3af;
+    padding: 0.75rem 0;
+  }
+}

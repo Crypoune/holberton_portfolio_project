@@ -10,5 +10,6 @@ router.register(r'devis',       views.DevisViewSet,      basename='devis')
 
 urlpatterns = [
     path('auth/', obtain_auth_token, name='api_token_auth'),
+    path('dashboard/stats/', views.DashboardStatsView.as_view(), name='dashboard-stats'),
     path('', include(router.urls)),
 ]

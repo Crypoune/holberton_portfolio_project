@@ -137,6 +137,10 @@ REST_FRAMEWORK = {
         'anon': '20/minute',   # ajuste selon ton besoin réel (formulaire devis public inclus)
         'user': '100/minute',
     },
+    'DEFAULT_PAGINATION_CLASS': 
+        'rest_framework.pagination.PageNumberPagination',
+        'PAGE_SIZE': 20,
+
 }
 
 # ------------------------------------------------------------------

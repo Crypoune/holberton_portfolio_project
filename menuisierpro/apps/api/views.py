@@ -2,37 +2,80 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from django.db import transaction
 from apps.menuisier.models import Chantier, Temoignage, Devis, Client_Prospect
-# On importe TOUS les outils existants proprement ici dès le départ :
+from .serializers import TemoignagePublicSerializer
+from .serializers import ClientProspectSerializer
+import logging
 from .serializers import (
-    ChantierSerializer, 
-    TemoignageSerializer, 
+    ChantierSerializer, ChantierListSerializer,
+    TemoignagePublicSerializer, 
     DevisSerializer, 
     DevisCreationSerializer
 )
+from .permissions import IsArtisanStaff, IsArtisanStaffOrReadOnly
+
+logger = logging.getLogger(__name__)
 
 class ChantierViewSet(viewsets.ModelViewSet):
-    queryset            = Chantier.objects.filter(est_termine=True)
+    queryset           = Chantier.objects.filter(est_termine=True).prefetch_related('images')
     serializer_class    = ChantierSerializer
-    permission_classes  = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes  = [IsArtisanStaffOrReadOnly]
     lookup_field        = 'slug'
 
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ChantierListSerializer
+        return ChantierSerializer
 
-class TemoignageViewSet(viewsets.ModelViewSet):
-    queryset            = Temoignage.objects.filter(est_valide=True)
-    serializer_class    = TemoignageSerializer
-    permission_classes  = [permissions.IsAuthenticatedOrReadOnly]
+class TemoignageViewSet(viewsets.ReadOnlyModelViewSet):
+    # Lecture seule : la soumission passe exclusivement par le flux à token
+    # (apps/menuisier/views.py), jamais par cette API.
+    queryset           = Temoignage.objects.filter(est_valide=True)
+    serializer_class   = TemoignagePublicSerializer
+    permission_classes = [permissions.AllowAny]
 
+class DashboardStatsView(APIView):
+    """
+    Métriques du tableau de bord, calculées entièrement côté base de données.
+    - Un seul aggregate() = une seule requête SQL avec plusieurs COUNT(...) FILTER(...),
+      donc pas de N+1 et pas de chargement de la table Devis en mémoire.
+    - .only() + slicing sur les dernières inscriptions : on ne récupère que les
+      colonnes utiles, et seulement 5 lignes, quelle que soit la taille de la table.
+    """
+    permission_classes = [IsArtisanStaff]
 
+    def get(self, request):
+        devis_stats = Devis.objects.aggregate(
+            total=Count('id'),
+            en_attente=Count('id', filter=Q(statut=Devis.Statut.EN_ATTENTE)),
+            a_relancer=Count('id', filter=Q(statut__in=[
+                Devis.Statut.RELANCE_J3, Devis.Statut.RELANCE_J7,
+            ])),
+            acceptes=Count('id', filter=Q(statut=Devis.Statut.CONVERTI)),
+        )
+
+        dernieres_inscriptions = (
+            Client_Prospect.objects
+            .only('id', 'nom', 'telephone_whatsapp', 'date_creation')
+            .order_by('-date_creation')[:5]
+        )
+
+        return Response({
+            "devis": devis_stats,
+            "total_clients": Client_Prospect.objects.count(),  # COUNT(*) pur, pas de SELECT *
+            "dernieres_inscriptions": ClientProspectSerializer(
+                dernieres_inscriptions, many=True
+            ).data,
+        })
 # ==============================================================================
 # DEVIS VIEWSET OPTIMISÉ POUR L'INTÉGRATION REACT
 # ==============================================================================
 class DevisViewSet(viewsets.ModelViewSet):
     queryset            = Devis.objects.all()
     serializer_class    = DevisSerializer
-    permission_classes  = [permissions.IsAuthenticated]
+    permission_classes  = [IsArtisanStaff]
 
     def get_permissions(self):
-        """Ouvre la porte uniquement pour la création publique (POST React)."""
+        """Seule la création (formulaire public React) reste ouverte à tous.."""
         if self.action == 'create':
             return [permissions.AllowAny()]
         return super().get_permissions()
@@ -56,31 +99,26 @@ class DevisViewSet(viewsets.ModelViewSet):
 
         try:
             with transaction.atomic():
-                # 1. Récupération ou création du profil client dans la BD
+
                 client, created = Client_Prospect.objects.get_or_create(
                     telephone_whatsapp=telephone,
                     defaults={'nom': nom_client, 'email': email_client}
                 )
 
-                # 2. On isole les données destinées uniquement aux specs du meuble
                 devis_data = {
                     'type_meuble': donnees_react.get('type_meuble'),
                     'dimensions_approximatives': donnees_react.get('dimensions_approximatives', ''),
                     'materiau': donnees_react.get('materiau', '')
                 }
 
-                # 3. Utilisation du DevisCreationSerializer
                 serializer = DevisCreationSerializer(data=devis_data)
                 
-                # MODIFICATION ICI : On attrape l'erreur de validation si elle existe
                 if not serializer.is_valid():
-                    print(f"❌ DÉFAUT DE VALIDATION SERIALIZER : {serializer.errors}")
+                    logger.warning("Validation devis échouée : %s", serializer.errors)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 
-                # 4. On enregistre en y injectant notre client à la volée
                 devis_instance = serializer.save(client=client)
 
-                # 5. Fabrication du texte de relance WhatsApp
                 devis_instance.message_whatsapp_genere = (
                     f"Devis Pro #{client.nom} : {devis_instance.type_meuble}\n\n"
                     f"Bonjour {client.nom},\n"
@@ -93,8 +131,8 @@ class DevisViewSet(viewsets.ModelViewSet):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        except Exception as e:
-            print(f"❌ ERREUR API DEVIS : {str(e)}")
+        except Exception:
+            logger.exception("Erreur lors de la création d'un devis")
             return Response(
                 {"error": "Une erreur technique interne est survenue."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

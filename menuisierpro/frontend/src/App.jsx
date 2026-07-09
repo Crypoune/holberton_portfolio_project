@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Portfolio from "./pages/Portfolio";
 import RequestQuote from "./pages/RequestQuote";
 import Login from "./pages/Login"; // Notre nouvelle pièce !
+import atelier from "./pages/Atelier"; // Notre nouvelle pièce !
 
 function App() {
   // 1. L'application démarre l'Accueil public
@@ -45,6 +46,7 @@ function App() {
         {activePage === "portfolio" && <Portfolio />}
         {activePage === "devis" && <RequestQuote />}
         {activePage === "login" && <Login onLoginSuccess={handleLoginSuccess} />}
+        {activePage === "atelier" && <Atelier />}
         
         {/* LE SAS DE SÉCURITÉ : Si l'utilisateur force l'affichage du dashboard sans token, on lui montre le login */}
         {activePage === "dashboard" && (
