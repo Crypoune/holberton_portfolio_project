@@ -1,12 +1,12 @@
+import { useState } from "react";
 import StatCard from "../components/dashboard/StatCard";
 import QuotesList from "../components/dashboard/QuotesList";
-import useQuotes from "../hooks/useQuotes";
+import QuotesFilters from "../components/dashboard/QuotesFilters";
+import useQuotes, { DEFAULT_FILTERS } from "../hooks/useQuotes";
 
 function Dashboard({ token }) {
-  const { quotes, stats, recentClients, loading, error } = useQuotes(token);
-
-  if (loading) return <div className="dashboard__loading">Chargement...</div>;
-  if (error) return <div className="dashboard__error">Erreur : {error}</div>;
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const { quotes, stats, recentClients, loading, error } = useQuotes(token, filters);
 
   return (
     <main className="dashboard">
@@ -24,10 +24,11 @@ function Dashboard({ token }) {
 
       <section className="dashboard__section">
         <h2>Devis en cours</h2>
-        <p className="dashboard__subtitle">
-          Cliquez sur le bouton WhatsApp pour relancer vos clients
-        </p>
-        <QuotesList quotes={quotes} />
+        <QuotesFilters filters={filters} onChange={setFilters} />
+
+        {loading && <p className="dashboard__loading">Chargement...</p>}
+        {error && <p className="dashboard__error">Erreur : {error}</p>}
+        {!loading && !error && <QuotesList quotes={quotes} />}
       </section>
 
       <section className="dashboard__section">

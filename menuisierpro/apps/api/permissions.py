@@ -15,8 +15,6 @@ class IsArtisanStaff(permissions.BasePermission):
 class IsArtisanStaffOrReadOnly(permissions.BasePermission):
     """
     Lecture publique (GET/HEAD/OPTIONS), écriture réservée au staff.
-    Remplace IsAuthenticatedOrReadOnly qui laissait passer N'IMPORTE QUEL
-    compte authentifié (pas seulement l'artisan) sur les actions d'écriture.
     """
 
     def has_permission(self, request, view):
