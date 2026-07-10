@@ -17,7 +17,6 @@ function useQuotes(token, filters = DEFAULT_FILTERS) {
   const fetchDashboard = useCallback(() => {
     if (!token) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(null);
 
@@ -61,6 +60,7 @@ function useQuotes(token, filters = DEFAULT_FILTERS) {
 
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDashboard()?.then(() => {
       if (cancelled) return;
     });
