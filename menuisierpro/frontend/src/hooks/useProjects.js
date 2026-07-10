@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import armoire from "../assets/portfolio/armoire.webp";
 import banc from "../assets/portfolio/banc.webp";
 import bureau from "../assets/portfolio/bureau.webp";
@@ -31,18 +31,9 @@ const MOCK_PROJECTS = [
 ];
 
 function useProjects() {
-  const [projects, setProjects] = useState(MOCK_PROJECTS);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // À activer quand Django tourne :
-  // useEffect(() => {
-  //   fetch('/api/v1/projects/')
-  //     .then((res) => res.json())
-  //     .then(setProjects)
-  //     .catch((err) => setError(err.message))
-  //     .finally(() => setLoading(false))
-  // }, [])
+  const [projects] = useState(MOCK_PROJECTS);
+  const loading = false;
+  const error = null;
 
   return { projects, loading, error };
 }

@@ -35,16 +35,16 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <main className="request-quotes">
-      <header className="request-quotes__header">
-        <div className="request-quotes__icon">
+    <main className="request-quote">
+      <header className="request-quote__header">
+        <div className="request-quote__icon" style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "48px", height: "48px", borderRadius: "50%", background: "#fef3c7", color: "#d97706", margin: "0 auto 1rem" }}>
           <Lock size={24} />
         </div>
         <h1>Espace Artisan</h1>
         <p>Connectez-vous pour accéder au carnet de commandes</p>
       </header>
 
-      <form className="request-quotes__form" onSubmit={handleSubmit}>
+      <form className="request-quote__form" onSubmit={handleSubmit}>
         <fieldset>
           <legend>Connexion sécurisée</legend>
 
@@ -67,11 +67,11 @@ function Login({ onLoginSuccess }) {
           />
         </fieldset>
 
-        {error && <p className="request-quotes__error">{error}</p>}
+        {error && <p className="request-quote__error">{error}</p>}
 
         <button
           type="submit"
-          className="request-quotes__submit"
+          className="request-quote__submit"
           disabled={loading}
         >
           {loading ? "Vérification..." : "Se connecter"}

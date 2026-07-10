@@ -45,7 +45,7 @@
 
   &__hero-content h1 {
     color: #fff;
-    font-size: 2rem;
+    font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem);
     font-weight: 800;
     line-height: 1.15;
     margin-bottom: 1rem;
@@ -88,39 +88,6 @@
     }
   }
 
-  // SERVICES BAND
-  &__services {
-    background: $color-orange;
-    padding: 3rem 1.5rem;
-    text-align: center;
-
-    @include lg {
-      padding: 4rem 2rem;
-    }
-  }
-
-  &__services-tag {
-    display: block;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    margin-bottom: 2rem;
-  }
-
-  &__services-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-
-    @include lg {
-      flex-direction: row;
-      justify-content: space-between;
-    }
-  }
-
   // PORTFOLIO PREVIEW
   &__portfolio {
     padding: 3rem 1.5rem;
@@ -140,16 +107,16 @@
   }
 
   &__portfolio h2,
-  &__temoignages h2,
+  &__feedbacks h2,
   &__trust h2 {
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
     font-weight: 800;
     color: $color-charcoal;
     margin-bottom: 2rem;
   }
 
   // TESTIMONIALS
-  &__temoignages {
+  &__feedbacks {
     background: $color-charcoal;
     padding: 3rem 1.5rem;
 
@@ -226,48 +193,33 @@
   }
 
   &__footer-links {
-    color: $color-text-muted;
-    font-size: 0.85rem;
-    padding-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+    padding-bottom: 1.5rem;
     border-bottom: 1px solid $color-charcoal-light;
     margin-bottom: 1rem;
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
+
+    button,
+    a {
+      color: $color-text-muted;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: #fff;
+      }
+    }
   }
 
   &__footer-copy {
     color: $color-text-muted;
     font-size: 0.75rem;
-  }
-}
-
-// SERVICE CARD (sur fond orange)
-.service-card {
-  flex: 1;
-  text-align: center;
-
-  &__icon-wrap {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    margin: 0 auto 1rem;
-  }
-
-  h3 {
-    color: #fff;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-  }
-  p {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 0.9rem;
-    max-width: 280px;
-    margin: 0 auto;
   }
 }
 
@@ -283,6 +235,7 @@
 }
 
 .portfolio-card {
+  width: clamp(260px, 22vw, 380px);
   aspect-ratio: 4/3;
   border-radius: 0.75rem;
   background-size: cover;
@@ -310,7 +263,7 @@
 }
 
 // TESTIMONIAL CARD
-.temoignages-grid {
+.feedbacks-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
@@ -320,8 +273,9 @@
   }
 }
 
-.temoignage-card {
+.feedback-card {
   background: $color-charcoal-light;
+  width: clamp(280px, 26vw, 420px);
   border-radius: 0.75rem;
   padding: 1.5rem;
 

@@ -115,7 +115,7 @@ function RequestQuote() {
 
   const validateForm = () => {
     // 1. Validation du Nom complet
-    if (!/^[a-zA-ZÀ-ÿ\s\-\']{3,100}$/.test(form.nom.trim())) {
+    if (!/^[a-zA-ZÀ-ÿ\s-']{3,100}$/.test(form.nom.trim())) {
       setValidationError("Le nom doit comporter entre 3 et 100 caractères (lettres et espaces uniquement).");
       return false;
     }
@@ -127,7 +127,7 @@ function RequestQuote() {
     }
 
     // 3. Validation du téléphone WhatsApp
-    const telClean = form.telephone_whatsapp.replace(/[\s\-\(\)]/g, "");
+    const telClean = form.telephone_whatsapp.replace(/[\s-()]/g, "");
     if (!telClean) {
       setValidationError("Le numéro WhatsApp est obligatoire.");
       return false;
@@ -211,7 +211,7 @@ function RequestQuote() {
 
     setStatus("envoi");
 
-    const telClean = form.telephone_whatsapp.replace(/[\s\-\(\)]/g, "");
+    const telClean = form.telephone_whatsapp.replace(/[\s-()]/g, "");
     
     // Utiliser FormData pour l'envoi de fichier
     const formData = new FormData();
@@ -246,6 +246,7 @@ function RequestQuote() {
         throw new Error(data.error || "Erreur lors de l'envoi du devis");
       }
 
+      // eslint-disable-next-line react-hooks/purity
       localStorage.setItem("last_quote_submitted_at", Date.now().toString());
       setStatus("succes");
     } catch (err) {
@@ -262,7 +263,7 @@ function RequestQuote() {
 
   if (status === "succes") {
     return (
-      <main className="demande-devis demande-devis--succes">
+      <main className="request-quote request-quote--succes">
         <h1>Merci !</h1>
         <p>
           Votre demande de devis a bien été envoyée. Nous vous répondrons sous
@@ -273,20 +274,20 @@ function RequestQuote() {
   }
 
   return (
-    <main className="demande-devis">
-      <header className="demande-devis__header">
+    <main className="request-quote">
+      <header className="request-quote__header">
         <h1>Demander un devis gratuit</h1>
         <p>Parlez-nous de votre projet, on vous répond rapidement</p>
       </header>
 
       {cooldownRemaining > 0 && (
-        <div className="demande-devis__error" style={{ marginBottom: "1.5rem" }}>
+        <div className="request-quote__error" style={{ marginBottom: "1.5rem" }}>
           Vous avez récemment soumis une demande. Veuillez patienter{" "}
           <strong>{formatTime(cooldownRemaining)}</strong> avant d'effectuer une nouvelle estimation.
         </div>
       )}
 
-      <form className="demande-devis__form" onSubmit={handleSubmit}>
+      <form className="request-quote__form" onSubmit={handleSubmit}>
         <fieldset>
           <legend>Vos coordonnées</legend>
 
@@ -296,7 +297,7 @@ function RequestQuote() {
             name="nom"
             type="text"
             required
-            pattern="^[a-zA-ZÀ-ÿ\s\-\']{3,100}$"
+            pattern="^[a-zA-ZÀ-ÿ\s-']{3,100}$"
             title="Le nom doit comporter entre 3 et 100 caractères (lettres et espaces uniquement)"
             placeholder="Ex: Rakoto Michel"
             value={form.nom}
@@ -570,14 +571,20 @@ function RequestQuote() {
         </fieldset>
 
         {validationError && (
-          <p className="demande-devis__error">
+          <p className="request-quote__error">
             {validationError}
+          </p>
+        )}
+
+        {status === "erreur" && (
+          <p className="request-quote__error">
+            Une erreur est survenue, réessayez.
           </p>
         )}
 
         <button
           type="submit"
-          className="demande-devis__submit"
+          className="request-quote__submit"
           disabled={status === "envoi" || cooldownRemaining > 0}
         >
           {status === "envoi" ? "Envoi en cours..." : "Envoyer ma demande"}

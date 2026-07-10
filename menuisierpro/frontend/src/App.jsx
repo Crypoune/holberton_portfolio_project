@@ -2,51 +2,69 @@ import { useState } from "react";
 import Sidebar from "./components/layout/Sidebar";
 import Header from "./components/layout/Header";
 import Home from "./pages/Home";
+import About from "./pages/About";
+import LegalMention from "./pages/LegalMention";
 import Dashboard from "./pages/Dashboard";
 import Portfolio from "./pages/Portfolio";
 import RequestQuote from "./pages/RequestQuote";
 import Login from "./pages/Login";
 
 function App() {
+  // 1. L'application démarre l'Accueil public
   const [activePage, setActivePage] = useState("accueil");
+
+  // 2. On vérifie si un badge (token) est déjà enregistré dans le navigateur
   const [token, setToken] = useState(localStorage.getItem("token"));
-  //const [token, setToken] = useState("fake-token-visual-testing");
+
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleLoginSuccess = (newToken) => {
-    localStorage.setItem("token", newToken);
+    localStorage.setItem("token", newToken); // On range le badge dans la poche
     setToken(newToken);
-    setActivePage("dashboard");
+    setActivePage("dashboard"); // On ouvre la porte du tableau de bord
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("token"); // On jette le badge
     setToken(null);
-    setActivePage("accueil");
+    setActivePage("accueil"); // Retour à la boutique publique
   };
 
   return (
     <div className="app">
+      {/* On passe l'état de connexion aux barres de navigation */}
       <Sidebar
         activePage={activePage}
         onNavigate={setActivePage}
         isConnected={!!token}
         onLogout={handleLogout}
+        isOpen={sidebarOpen}
       />
-      <Header onNavigate={setActivePage} isConnected={!!token} />
+      <Header
+        onNavigate={setActivePage}
+        isConnected={!!token}
+        onToggleSidebar={() => setSidebarOpen((v) => !v)}
+      />
 
-      <div className="app__content">
+      <div
+        className={`app__content ${sidebarOpen ? "" : "app__content--full"}`}
+      >
         {activePage === "accueil" && <Home onNavigate={setActivePage} />}
+        {activePage === "portfolio" && <Portfolio />}
+        {activePage === "devis" && <RequestQuote />}
+        {activePage === "apropos" && <About />}
+        {activePage === "mentions-legales" && <LegalMention />}
+        {activePage === "login" && (
+          <Login onLoginSuccess={handleLoginSuccess} />
+        )}
+
+        {/* LE SAS DE SÉCURITÉ : Si l'utilisateur force l'affichage du dashboard sans token, on lui montre le login */}
         {activePage === "dashboard" &&
           (token ? (
             <Dashboard token={token} />
           ) : (
-            <Login onNavigate={setActivePage} onLoginSuccess={handleLoginSuccess} />
+            <Login onLoginSuccess={handleLoginSuccess} />
           ))}
-        {activePage === "portfolio" && <Portfolio />}
-        {activePage === "devis" && <RequestQuote />}
-        {activePage === "login" && (
-          <Login onNavigate={setActivePage} onLoginSuccess={handleLoginSuccess} />
-        )}
       </div>
     </div>
   );

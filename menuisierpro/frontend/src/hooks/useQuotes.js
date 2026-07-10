@@ -43,10 +43,46 @@ const MOCK_DEVIS = [
   },
 ];
 
-function useQuotes() {
+function useQuotes(token) {
   const [quotes, setQuotes] = useState(MOCK_DEVIS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!token) return;
+
+    setLoading(true);
+    setError(null);
+
+    fetch("/api/v1/devis/", {
+      headers: {
+        "Authorization": `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Erreur serveur (${res.status})`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setQuotes(data);
+        } else {
+          throw new Error("Format de données invalide reçu du serveur");
+        }
+      })
+      .catch((err) => {
+        console.error("Erreur de récupération des devis :", err);
+        setError(err.message);
+        // Fallback sur les mocks locaux
+        setQuotes(MOCK_DEVIS);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [token]);
 
   const stats = {
     total: quotes.length,

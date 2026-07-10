@@ -2,8 +2,8 @@ import StatCard from "../components/dashboard/StatCard";
 import QuotesList from "../components/dashboard/QuotesList";
 import useQuotes from "../hooks/useQuotes";
 
-function Dashboard() {
-  const { quotes, stats, loading, error } = useQuotes();
+function Dashboard({ token }) {
+  const { quotes, stats, loading, error } = useQuotes(token);
 
   if (loading) return <div className="dashboard__loading">Chargement...</div>;
   if (error) return <div className="dashboard__error">Erreur : {error}</div>;

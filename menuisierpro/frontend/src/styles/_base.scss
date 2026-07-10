@@ -8,11 +8,17 @@
 
   &__content {
     flex: 1;
-    padding: 1.5rem;
+    min-width: 0;
+    transition: margin-left 0.25s ease;
 
     @include lg {
       margin-left: $sidebar-width;
-      padding: 2rem;
+    }
+
+    &--full {
+      @include lg {
+        margin-left: 0;
+      }
     }
   }
 }
