@@ -584,11 +584,7 @@ function RequestQuote() {
         <button
           type="submit"
           className="request-quote__submit"
-<<<<<<< HEAD
           disabled={status === "envoi" || cooldownRemaining > 0}
-=======
-          disabled={status === "envoi"}
->>>>>>> origin/jason
         >
           {status === "envoi" ? "Envoi en cours..." : "Envoyer ma demande"}
         </button>
