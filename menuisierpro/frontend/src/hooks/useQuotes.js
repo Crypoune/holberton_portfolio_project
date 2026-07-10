@@ -51,6 +51,7 @@ function useQuotes(token) {
   useEffect(() => {
     if (!token) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(null);
 
