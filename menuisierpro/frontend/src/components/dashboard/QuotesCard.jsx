@@ -1,9 +1,12 @@
-import { Phone, Calendar, Clock } from "lucide-react";
+import { useState } from "react";
+import { Phone, Calendar, Clock, Trash2 } from "lucide-react";
 import Badge from "../ui/Badge";
 import WhatsAppButton from "../ui/WhatsAppButton";
 
-function QuotesCard({ quotes }) {
+function QuotesCard({ quotes, onDelete }) {
+  const [deleting, setDeleting] = useState(false);
   const {
+    id,
     client,
     type_meuble,
     statut,
@@ -30,6 +33,22 @@ function QuotesCard({ quotes }) {
 
   const button = labelButton();
 
+  const handleDelete = async () => {
+    const confirme = window.confirm(
+      `Supprimer définitivement le devis de ${client?.nom || client?.name || "ce client"} ` +
+      `(${type_meuble}) ? Cette action est irréversible.`
+    );
+    if (!confirme) return;
+
+    setDeleting(true);
+    const result = await onDelete(id);
+    setDeleting(false);
+
+    if (!result?.success) {
+      window.alert("La suppression a échoué : " + (result?.message || "erreur inconnue"));
+    }
+  };
+
   return (
     <div className="devis-card">
       <div className="devis-card__header">
@@ -37,7 +56,19 @@ function QuotesCard({ quotes }) {
           <h3 className="devis-card__nom">{client?.name || client?.nom}</h3>
           <p className="devis-card__meuble">{type_meuble}</p>
         </div>
-        <Badge statut={statut} />
+        <div className="devis-card__header-actions">
+          <Badge statut={statut} />
+          <button
+            type="button"
+            className="devis-card__delete"
+            onClick={handleDelete}
+            disabled={deleting}
+            aria-label="Supprimer ce devis"
+            title="Supprimer ce devis"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="devis-card__meta">

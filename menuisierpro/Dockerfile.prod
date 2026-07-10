@@ -1,0 +1,35 @@
+# --- Dockerfile.prod ---
+# Différence avecDockerfile de dev : pas de bind-mount du code, on le
+# copie une fois pour toutes dans l'image (immuable), et on collecte les
+# fichiers statiques au build plutôt qu'au runtime. 
+# to run it : docker compose -f docker-compose.prod.yml up -d --build
+
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# psycopg2 a besoin de libpq pour compiler/se connecter à PostgreSQL
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
+
+COPY . .
+
+# collectstatic rassemble tous les fichiers statiques (CSS, JS, admin Django)
+# dans STATIC_ROOT pour que Nginx puisse les servir directement, sans passer
+# par Django à chaque requête.
+RUN python manage.py collectstatic --noinput
+
+# --workers : règle empirique = (2 x nombre de coeurs CPU) + 1
+# --bind 0.0.0.0:8000 : écoute sur toutes les interfaces réseau du conteneur
+# --timeout 30 : tue un worker qui bloque plus de 30s (évite qu'une requête
+#   lente ne bloque un worker indéfiniment)
+CMD ["gunicorn", "config.wsgi:application", \
+     "--bind", "0.0.0.0:8000", \
+     "--workers", "3", \
+     "--timeout", "30", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-"]

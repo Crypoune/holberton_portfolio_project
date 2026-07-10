@@ -2,8 +2,8 @@ from django.db import models
 
 
 class Client_Prospect(models.Model):
-    nom                = models.CharField(max_length=150)
-    telephone_whatsapp = models.CharField(max_length=20)
+    nom                = models.CharField(max_length=50)
+    telephone_whatsapp = models.CharField(max_length=20, unique=True)  # clé unique pour identifier le client/prospect
     email              = models.EmailField(blank=True)  # optionnel selon le canal
     date_creation      = models.DateTimeField(auto_now_add=True)
 

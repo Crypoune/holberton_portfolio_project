@@ -1,0 +1,37 @@
+.atelier {
+  &__hero {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  &__section {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 1rem;
+
+    &--reverse {
+      flex-direction: row-reverse;
+    }
+  }
+
+  &__image-placeholder {
+    flex: 1;
+    aspect-ratio: 4 / 3;
+    background: #e5e7eb;
+    border-radius: 0.5rem;
+  }
+
+  &__values-grid,
+  &__gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  &__value-card {
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    background: #f9fafb;
+  }
+}

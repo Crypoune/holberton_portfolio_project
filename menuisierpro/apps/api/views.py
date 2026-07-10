@@ -1,56 +1,127 @@
 import re
+import logging
 from datetime import timedelta
 from django.utils import timezone
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from rest_framework import viewsets, permissions, status
-from rest_framework.response import Response
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.db import transaction
+from django.db.models import Count, Q
+from rest_framework import viewsets, permissions, status, filters
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+
 from apps.menuisier.models import Chantier, Temoignage, Devis, Client_Prospect
-# On importe TOUS les outils existants proprement ici dès le départ :
 from .serializers import (
-    ChantierSerializer, 
-    TemoignageSerializer, 
-    DevisSerializer, 
-    DevisCreationSerializer
+    ChantierSerializer, ChantierListSerializer,
+    TemoignagePublicSerializer,
+    ClientProspectSerializer,
+    DevisSerializer, DevisCreationSerializer,
 )
+from .permissions import IsArtisanStaff, IsArtisanStaffOrReadOnly
+
+logger = logging.getLogger(__name__)
+
 
 class ChantierViewSet(viewsets.ModelViewSet):
-    queryset            = Chantier.objects.filter(est_termine=True)
+    queryset            = Chantier.objects.filter(est_termine=True).prefetch_related('images')
     serializer_class    = ChantierSerializer
-    permission_classes  = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes  = [IsArtisanStaffOrReadOnly]
     lookup_field        = 'slug'
 
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ChantierListSerializer
+        return ChantierSerializer
 
-class TemoignageViewSet(viewsets.ModelViewSet):
+
+class TemoignageViewSet(viewsets.ReadOnlyModelViewSet):
+    # Lecture seule : la soumission passe exclusivement par le flux à token
+    # (apps/menuisier/views.py), jamais par cette API.
     queryset            = Temoignage.objects.filter(est_valide=True)
-    serializer_class    = TemoignageSerializer
-    permission_classes  = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class    = TemoignagePublicSerializer
+    permission_classes  = [permissions.AllowAny]
+
+
+class DashboardStatsView(APIView):
+    """
+    Métriques du tableau de bord, calculées entièrement côté base de données.
+    """
+    permission_classes = [IsArtisanStaff]
+
+    def get(self, request):
+        devis_stats = Devis.objects.aggregate(
+            total=Count('id'),
+            en_attente=Count('id', filter=Q(statut=Devis.Statut.EN_ATTENTE)),
+            a_relancer=Count('id', filter=Q(statut__in=[
+                Devis.Statut.RELANCE_J3, Devis.Statut.RELANCE_J7,
+            ])),
+            acceptes=Count('id', filter=Q(statut=Devis.Statut.CONVERTI)),
+        )
+
+        dernieres_inscriptions = (
+            Client_Prospect.objects
+            .only('id', 'nom', 'telephone_whatsapp', 'date_creation')
+            .order_by('-date_creation')[:5]
+        )
+
+        return Response({
+            "devis": devis_stats,
+            "total_clients": Client_Prospect.objects.count(),
+            "dernieres_inscriptions": ClientProspectSerializer(
+                dernieres_inscriptions, many=True
+            ).data,
+        })
 
 
 # ==============================================================================
 # DEVIS VIEWSET OPTIMISÉ POUR L'INTÉGRATION REACT
 # ==============================================================================
 class DevisViewSet(viewsets.ModelViewSet):
-    queryset            = Devis.objects.all()
-    serializer_class    = DevisSerializer
-    permission_classes  = [permissions.IsAuthenticated]
+    queryset             = Devis.objects.select_related('client').all()
+    serializer_class     = DevisSerializer
+    permission_classes   = [IsArtisanStaff]
     parser_classes      = [JSONParser, MultiPartParser, FormParser]
 
+    # --- Tri : ?ordering=date_creation ou ?ordering=-date_creation ---
+    filter_backends       = [filters.OrderingFilter]
+    ordering_fields        = ['date_creation']
+    ordering               = ['-date_creation']  # par défaut : du plus récent au plus ancien
+
     def get_permissions(self):
-        """Ouvre la porte uniquement pour la création publique (POST React)."""
+        """Seule la création (formulaire public React) reste ouverte à tous."""
         if self.action == 'create':
             return [permissions.AllowAny()]
         return super().get_permissions()
 
+    def get_queryset(self):
+        """
+        Filtrage par matériau, type de meuble, et statut.
+        """
+        queryset = super().get_queryset()
+        params = self.request.query_params
+
+        materiau = params.get('materiau')
+        if materiau:
+            queryset = queryset.filter(materiau__icontains=materiau)
+
+        type_meuble = params.get('type_meuble')
+        if type_meuble:
+            queryset = queryset.filter(type_meuble__icontains=type_meuble)
+
+        statut = params.get('statut')
+        if statut:
+            queryset = queryset.filter(statut=statut)
+
+        return queryset
+
     def create(self, request, *args, **kwargs):
         """
-        Reçoit le JSON ou FormData de React, valide les données (coordonnées, dimensions, options),
+        Reçoit le JSON ou FormData de React, valide les données,
         applique une limitation de débit (anti-spam IP/téléphone) et enregistre.
         """
         donnees_react = request.data
-        
+
         nom_client = donnees_react.get('nom', '').strip()
         telephone  = donnees_react.get('telephone_whatsapp', '').strip()
         email_client = donnees_react.get('email', '').strip()
@@ -156,7 +227,6 @@ class DevisViewSet(viewsets.ModelViewSet):
                     defaults={'nom': nom_client, 'email': email_client}
                 )
                 if not created and email_client and not client.email:
-                    # Optionnel : Mettre à jour l'email s'il n'était pas défini
                     client.email = email_client
                     client.save()
 
@@ -174,13 +244,14 @@ class DevisViewSet(viewsets.ModelViewSet):
                     'budget': donnees_react.get('budget', ''),
                     'delai': donnees_react.get('delai', ''),
                     'description': donnees_react.get('description', ''),
-                    'photo_plan': request.FILES.get('photo_plan') or donnees_react.get('photo_plan')
+                    'photo_plan': request.FILES.get('photo_plan') or donnees_react.get('photo_plan'),
+                    'site_web': donnees_react.get('site_web', '') # honeypot
                 }
 
                 # 9. Utilisation du DevisCreationSerializer
                 serializer = DevisCreationSerializer(data=devis_data)
                 if not serializer.is_valid():
-                    print(f"❌ DÉFAUT DE VALIDATION SERIALIZER : {serializer.errors}")
+                    logger.warning("Validation devis échouée : %s", serializer.errors)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 
                 # 10. Enregistrement avec client et IP
@@ -209,7 +280,7 @@ class DevisViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except Exception as e:
-            print(f"❌ ERREUR API DEVIS : {str(e)}")
+            logger.exception("Erreur lors de la création d'un devis")
             return Response(
                 {"error": f"Une erreur technique interne est survenue : {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
