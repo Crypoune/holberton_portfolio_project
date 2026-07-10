@@ -1,21 +1,34 @@
 import WhatsAppButton from "../components/ui/WhatsAppButton";
 import Marquee from "../components/ui/Marquee";
-import heroBackground from "../assets/hero-background.webp";
-import banc from "../assets/portfolio/banc.webp";
-import armoire from "../assets/portfolio/armoire.webp";
-import dressing2 from "../assets/portfolio/dressing2.webp";
-import table from "../assets/portfolio/table.webp";
-import fauteuil from "../assets/portfolio/fauteuil.webp";
-import bureau from "../assets/portfolio/bureau.webp";
 import { Star, CheckCircle, MapPin, Clock, Phone } from "lucide-react";
 
+import heroBackground from "../assets/hero-background.webp";
+import armoire from "../assets/portfolio/armoire.webp";
+import banc from "../assets/portfolio/banc.webp";
+import bureau from "../assets/portfolio/bureau.webp";
+import chaiseBar from "../assets/portfolio/chaise_bar.webp";
+import dressing1 from "../assets/portfolio/dressing1.webp";
+import dressing2 from "../assets/portfolio/dressing2.webp";
+import etagere from "../assets/portfolio/etagere.webp";
+import fauteuil from "../assets/portfolio/fauteuil.webp";
+import rangement from "../assets/portfolio/rangement.webp";
+import tableBasse from "../assets/portfolio/table_basse.webp";
+import table from "../assets/portfolio/table.webp";
+import bibliotheque from "../assets/portfolio/bibliotheque.webp";
+
 const REALISATIONS = [
-  { id: 1, label: "Chaises et table artisanale", img: table },
-  { id: 2, label: "Armoire sur mesure", img: armoire },
-  { id: 3, label: "Bibliothèque ouverte", img: dressing2 },
-  { id: 4, label: "Banc en bois", img: banc },
-  { id: 5, label: "Fauteuil en bois", img: fauteuil },
-  { id: 6, label: "Bureau sur mesure", img: bureau },
+  { id: 1, label: "Armoire sur mesure", img: armoire },
+  { id: 2, label: "Banc en bois", img: banc },
+  { id: 3, label: "Bureau sur mesure", img: bureau },
+  { id: 4, label: "Chaise de bar", img: chaiseBar },
+  { id: 5, label: "Dressing ouvert", img: dressing1 },
+  { id: 6, label: "Dressing sur mesure", img: dressing2 },
+  { id: 7, label: "Etagère murale", img: etagere },
+  { id: 8, label: "Fauteuil en bois", img: fauteuil },
+  { id: 9, label: "Meuble de rangement", img: rangement },
+  { id: 10, label: "Table basse artisanale", img: tableBasse },
+  { id: 11, label: "Chaises et table en bois massif", img: table },
+  { id: 12, label: "Bibliothèque ouverte", img: bibliotheque },
 ];
 
 const TEMOIGNAGES = [
