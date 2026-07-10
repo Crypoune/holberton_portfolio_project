@@ -50,7 +50,7 @@ function App() {
         
         {/* LE SAS DE SÉCURITÉ : Si l'utilisateur force l'affichage du dashboard sans token, on lui montre le login */}
         {activePage === "dashboard" && (
-          token ? <Dashboard token={token} /> : <Login onLoginSuccess={handleLoginSuccess} />
+          token ? <Dashboard token={token} onAuthError={handleLogout} /> : <Login onLoginSuccess={handleLoginSuccess} />
         )}
       </div>
     </div>

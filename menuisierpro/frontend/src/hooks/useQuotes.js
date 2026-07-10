@@ -7,24 +7,28 @@ const DEFAULT_FILTERS = {
   ordering: "-date_creation",
 };
 
-function useQuotes(token, filters = DEFAULT_FILTERS) {
+function useQuotes(token, filters = DEFAULT_FILTERS, onAuthError) {
   const [quotes, setQuotes] = useState([]);
   const [recentClients, setRecentClients] = useState([]);
   const [stats, setStats] = useState({ total: 0, enAttente: 0, acceptes: 0, aRelancer: 0 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const handleResponse = useCallback((res) => {
+  if (res.status === 401 || res.status === 403) {
+    onAuthError?.();
+    throw new Error("Session invalide ou droits insuffisants.");
+  }
+  if (!res.ok) throw new Error(`Erreur (${res.status})`);
+  return res.json();
+  }, [onAuthError]);
+
   const fetchDashboard = useCallback(() => {
     if (!token) return;
-
     setLoading(true);
     setError(null);
 
-    const headers = {
-      Authorization: `Token ${token}`,
-      "Content-Type": "application/json",
-    };
-
+    const headers = { Authorization: `Token ${token}`, "Content-Type": "application/json" };
     const params = new URLSearchParams();
     if (filters.materiau)    params.set("materiau", filters.materiau);
     if (filters.type_meuble) params.set("type_meuble", filters.type_meuble);
@@ -32,14 +36,8 @@ function useQuotes(token, filters = DEFAULT_FILTERS) {
     params.set("ordering", filters.ordering || "-date_creation");
 
     return Promise.all([
-      fetch(`/api/v1/devis/?${params.toString()}`, { headers }).then((res) => {
-        if (!res.ok) throw new Error(`Erreur devis (${res.status})`);
-        return res.json();
-      }),
-      fetch("/api/v1/dashboard/stats/", { headers }).then((res) => {
-        if (!res.ok) throw new Error(`Erreur statistiques (${res.status})`);
-        return res.json();
-      }),
+      fetch(`/api/v1/devis/?${params.toString()}`, { headers }).then(handleResponse),
+      fetch("/api/v1/dashboard/stats/", { headers }).then(handleResponse),
     ])
       .then(([devisPage, statsData]) => {
         setQuotes(Array.isArray(devisPage.results) ? devisPage.results : devisPage);
@@ -56,7 +54,7 @@ function useQuotes(token, filters = DEFAULT_FILTERS) {
         setError(err.message);
       })
       .finally(() => setLoading(false));
-  }, [token, filters.materiau, filters.type_meuble, filters.statut, filters.ordering]);
+  }, [token, filters.materiau, filters.type_meuble, filters.statut, filters.ordering, onAuthError]);
 
   useEffect(() => {
     let cancelled = false;
@@ -65,35 +63,28 @@ function useQuotes(token, filters = DEFAULT_FILTERS) {
     });
     return () => { cancelled = true; };
   }, [fetchDashboard]);
-
-  const deleteQuote = useCallback(
-    async (id) => {
-      const previousQuotes = quotes;
-      // Suppression optimiste : on retire tout de suite la carte de l'écran,
-      // pour un retour instantané, quitte à la remettre si l'API échoue.
-      setQuotes((current) => current.filter((q) => q.id !== id));
-
-      try {
-        const res = await fetch(`/api/v1/devis/${id}/`, {
-          method: "DELETE",
-          headers: { Authorization: `Token ${token}` },
-        });
-
-        if (!res.ok && res.status !== 204) {
-          throw new Error(`Erreur suppression (${res.status})`);
-        }
-
-        // On rafraîchit les stats (les compteurs doivent refléter la suppression)
-        fetchDashboard();
-        return { success: true };
-      } catch (err) {
-        console.error("Erreur lors de la suppression du devis :", err);
-        setQuotes(previousQuotes); // on annule l'optimisme si ça a échoué
-        return { success: false, message: err.message };
+  
+  const deleteQuote = useCallback(async (id) => {
+    const previousQuotes = quotes;
+    setQuotes((current) => current.filter((q) => q.id !== id));
+    try {
+      const res = await fetch(`/api/v1/devis/${id}/`, {
+        method: "DELETE",
+        headers: { Authorization: `Token ${token}` },
+      });
+      if (res.status === 401 || res.status === 403) {
+        onAuthError?.();
+        throw new Error("Session invalide ou droits insuffisants.");
       }
-    },
-    [token, quotes, fetchDashboard]
-  );
+      if (!res.ok && res.status !== 204) throw new Error(`Erreur suppression (${res.status})`);
+      fetchDashboard();
+      return { success: true };
+    } catch (err) {
+      console.error("Erreur lors de la suppression du devis :", err);
+      setQuotes(previousQuotes);
+      return { success: false, message: err.message };
+    }
+  }, [token, filters.materiau, filters.type_meuble, filters.statut, filters.ordering, handleResponse]);
 
   return { quotes, stats, recentClients, loading, error, deleteQuote };
 }
