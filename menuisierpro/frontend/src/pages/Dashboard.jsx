@@ -6,7 +6,6 @@ import useQuotes, { DEFAULT_FILTERS } from "../hooks/useQuotes";
 
 function Dashboard({ token, onAuthError }) {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const { quotes, stats, recentClients, loading, error, deleteQuote } = useQuotes(token, filters);
   const { quotes, stats, recentClients, loading, error, deleteQuote } =
     useQuotes(token, filters, onAuthError);
     
