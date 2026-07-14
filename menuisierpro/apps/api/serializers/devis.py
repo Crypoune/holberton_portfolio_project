@@ -49,6 +49,12 @@ class DevisCreationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Une erreur est survenue.")
         return value
 
+    def create(self, validated_data):
+        # Exclure le honeypot de validated_data pour éviter l'erreur Devis() got unexpected keyword argument 'site_web'
+        validated_data.pop('site_web', None)
+        return super().create(validated_data)
+
+
 
 class DevisStatutSerializer(serializers.ModelSerializer):
     """

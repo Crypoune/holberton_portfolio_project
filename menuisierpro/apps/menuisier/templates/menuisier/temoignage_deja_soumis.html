@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Gepetto's House — Avis déjà enregistré{% endblock %}
+
+{% block content %}
+<div class="card card--info fade-in text-center">
+  <div class="info-icon">ℹ</div>
+  <div class="card__header">
+    <h1>Avis déjà enregistré</h1>
+    <p>Le lien à usage unique utilisé pour soumettre un avis sur le chantier <strong>{{ temoignage.chantier.titre }}</strong> a déjà été consommé.</p>
+  </div>
+  <div class="card__body">
+    <p>Nous avons déjà bien enregistré votre évaluation pour ce projet.</p>
+    <p>Si vous souhaitez modifier votre retour ou si vous rencontrez le moindre problème, n'hésitez pas à nous contacter directement sur WhatsApp.</p>
+  </div>
+  <div class="card__actions">
+    <a href="/" class="btn btn--outline">Retour au site</a>
+  </div>
+</div>
+{% endblock %}

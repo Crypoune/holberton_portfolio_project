@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework.authtoken.models import Token
 from apps.menuisier.models import Chantier
 from apps.menuisier.models import Devis, Client_Prospect
 
@@ -26,6 +27,9 @@ class ChantierAPITestCase(APITestCase):
         # 3. Les URLs de notre API
         self.url_liste = reverse('chantier-list')  # /api/v1/chantiers/
         self.url_detail = reverse('chantier-detail', kwargs={'slug': self.chantier_existant.slug})
+        
+        # 4. Création du Token pour l'artisan
+        self.token, _ = Token.objects.get_or_create(user=self.artisan)
 
     def test_READ_public_chantiers(self):
         """Vérifie que n'importe quel visiteur peut voir la vitrine des chantiers"""
@@ -47,7 +51,7 @@ class ChantierAPITestCase(APITestCase):
     def test_CREATE_chantier_autorise_artisan(self):
         """Vérifie que l'artisan connecté peut bien fabriquer (Créer) un chantier"""
         # L'artisan présente son badge
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         
         nouveau_chantier_data = {
             "titre": "Escalier hélicoïdal en Pin",
@@ -63,7 +67,7 @@ class ChantierAPITestCase(APITestCase):
 
     def test_DELETE_chantier_autorise_artisan(self):
         """Vérifie que l'artisan peut détruire (Supprimer) une fiche chantier"""
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         
         response = self.client.delete(self.url_detail)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -94,6 +98,10 @@ class DevisAPITestCase(APITestCase):
         )
 
         self.url_liste = reverse('devis-list')
+        
+        # Jetons d'authentification
+        self.token_artisan, _ = Token.objects.get_or_create(user=self.artisan)
+        self.token_client, _ = Token.objects.get_or_create(user=self.client_standard)
 
     # --- Sécurité : le vrai objet de la mission 3 ---
 
@@ -107,23 +115,26 @@ class DevisAPITestCase(APITestCase):
         Un compte authentifié mais non-staff doit être bloqué (403),
         même s'il possède un token/une session valide.
         """
-        self.client.login(username='client_standard', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_client.key)
         response = self.client.get(self.url_liste)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_LIST_devis_autorise_artisan(self):
         """L'artisan (staff) doit voir tous les devis."""
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_artisan.key)
         response = self.client.get(self.url_liste)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_CREATE_devis_autorise_anonyme(self):
         """Le formulaire public de demande de devis doit rester ouvert à tous."""
+        self.client.credentials() # pas de jeton (anonyme)
         payload = {
             "nom": "Nouveau Client",
-            "telephone_whatsapp": "261340009999",
+            "telephone_whatsapp": "+261340009999",
             "type_meuble": "Bibliothèque",
             "materiau": "Chêne",
+            "code_postal": "101",
+            "ville": "Antananarivo",
         }
         response = self.client.post(self.url_liste, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -131,7 +142,7 @@ class DevisAPITestCase(APITestCase):
     # --- Filtrage ---
 
     def test_FILTRE_par_materiau(self):
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_artisan.key)
         response = self.client.get(self.url_liste, {"materiau": "chêne"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         resultats = response.data.get("results", response.data)
@@ -139,21 +150,21 @@ class DevisAPITestCase(APITestCase):
         self.assertEqual(resultats[0]["id"], self.devis_chene_attente.id)
 
     def test_FILTRE_par_type_meuble(self):
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_artisan.key)
         response = self.client.get(self.url_liste, {"type_meuble": "armoire"})
         resultats = response.data.get("results", response.data)
         self.assertEqual(len(resultats), 1)
         self.assertEqual(resultats[0]["id"], self.devis_pin_j3.id)
 
     def test_FILTRE_par_statut_relance_j3(self):
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_artisan.key)
         response = self.client.get(self.url_liste, {"statut": "relance_j3"})
         resultats = response.data.get("results", response.data)
         self.assertEqual(len(resultats), 1)
         self.assertEqual(resultats[0]["id"], self.devis_pin_j3.id)
 
     def test_TRI_par_date_croissante(self):
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_artisan.key)
         response = self.client.get(self.url_liste, {"ordering": "date_creation"})
         resultats = response.data.get("results", response.data)
         # Le premier créé (devis_chene_attente) doit apparaître en premier
@@ -182,14 +193,18 @@ class DashboardStatsAPITestCase(APITestCase):
         )
 
         self.url = reverse('dashboard-stats')
+        
+        # Jetons d'authentification
+        self.token_artisan, _ = Token.objects.get_or_create(user=self.artisan)
+        self.token_client, _ = Token.objects.get_or_create(user=self.client_standard)
 
     def test_ACCES_interdit_utilisateur_standard(self):
-        self.client.login(username='client_standard', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_client.key)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_STATS_correctes_pour_artisan(self):
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_artisan.key)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["devis"]["total"], 2)
@@ -202,7 +217,7 @@ class DashboardStatsAPITestCase(APITestCase):
         Devis.objects.all().delete()
         Client_Prospect.objects.all().delete()
 
-        self.client.login(username='artisan_boss', password='password123')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_artisan.key)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["devis"]["total"], 0)
