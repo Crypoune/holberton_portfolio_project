@@ -40,9 +40,12 @@ function Portfolio() {
           <div
             key={project.id}
             className="project-card"
-            style={{ backgroundImage: `url(${project.image_principale})` }}
             onClick={() => setSelected(project)}
           >
+            <div
+              className="project-card__image"
+              style={{ backgroundImage: `url(${project.image_principale})` }}
+            />
             <div className="project-card__body">
               <h3>{project.titre}</h3>
               <p className="project-card__meta">

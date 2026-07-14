@@ -15,12 +15,12 @@ function useQuotes(token, filters = DEFAULT_FILTERS, onAuthError) {
   const [error, setError] = useState(null);
 
   const handleResponse = useCallback((res) => {
-  if (res.status === 401 || res.status === 403) {
-    onAuthError?.();
-    throw new Error("Session invalide ou droits insuffisants.");
-  }
-  if (!res.ok) throw new Error(`Erreur (${res.status})`);
-  return res.json();
+    if (res.status === 401 || res.status === 403) {
+      onAuthError?.();
+      throw new Error("Session invalide ou droits insuffisants.");
+    }
+    if (!res.ok) throw new Error(`Erreur (${res.status})`);
+    return res.json();
   }, [onAuthError]);
 
   const fetchDashboard = useCallback(() => {
@@ -54,37 +54,54 @@ function useQuotes(token, filters = DEFAULT_FILTERS, onAuthError) {
         setError(err.message);
       })
       .finally(() => setLoading(false));
-  }, [token, filters.materiau, filters.type_meuble, filters.statut, filters.ordering, onAuthError]);
+  }, [token, filters.materiau, filters.type_meuble, filters.statut, filters.ordering, handleResponse]);
 
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDashboard()?.then(() => {
       if (cancelled) return;
     });
     return () => { cancelled = true; };
   }, [fetchDashboard]);
   
-  const deleteQuote = useCallback(async (id) => {
-    const previousQuotes = quotes;
-    setQuotes((current) => current.filter((q) => q.id !== id));
-    try {
-      const res = await fetch(`/api/v1/devis/${id}/`, {
-        method: "DELETE",
-        headers: { Authorization: `Token ${token}` },
-      });
-      if (res.status === 401 || res.status === 403) {
-        onAuthError?.();
-        throw new Error("Session invalide ou droits insuffisants.");
+  const deleteQuote = useCallback(
+    async (id) => {
+      const previousQuotes = quotes;
+      
+      // 1. L'Illusionniste : Suppression optimiste
+      setQuotes((current) => current.filter((q) => q.id !== id));
+
+      try {
+        const res = await fetch(`/api/v1/devis/${id}/`, {
+          method: "DELETE",
+          headers: { Authorization: `Token ${token}` },
+        });
+
+        // 2. Le Videur (issu de la branche Jason) : On expulse en cas de fraude
+        if (res.status === 401 || res.status === 403) {
+          onAuthError?.();
+          throw new Error("Session invalide ou droits insuffisants.");
+        }
+
+        // 3. Le Prudent (issu de la branche Test) : On vérifie les erreurs serveur
+        if (!res.ok && res.status !== 204) {
+          throw new Error(`Erreur suppression (${res.status})`);
+        }
+
+        // 4. Succès : on re-synchronise la réalité avec le serveur
+        fetchDashboard();
+        return { success: true };
+      } catch (err) {
+        console.error("Erreur lors de la suppression du devis :", err);
+        
+        // 5. Le Filet de sécurité : On annule l'optimisme si le serveur a planté
+        setQuotes(previousQuotes); 
+        return { success: false, message: err.message };
       }
-      if (!res.ok && res.status !== 204) throw new Error(`Erreur suppression (${res.status})`);
-      fetchDashboard();
-      return { success: true };
-    } catch (err) {
-      console.error("Erreur lors de la suppression du devis :", err);
-      setQuotes(previousQuotes);
-      return { success: false, message: err.message };
-    }
-  }, [token, filters.materiau, filters.type_meuble, filters.statut, filters.ordering, handleResponse]);
+    },
+    [token, quotes, fetchDashboard, onAuthError]
+  );
 
   return { quotes, stats, recentClients, loading, error, deleteQuote };
 }

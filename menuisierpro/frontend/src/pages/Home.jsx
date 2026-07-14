@@ -1,45 +1,19 @@
 import WhatsAppButton from "../components/ui/WhatsAppButton";
+import Marquee from "../components/ui/Marquee";
 import heroBackground from "../assets/hero-background.webp";
-import cuisine2 from "../assets/portfolio/cuisine2.webp";
+import banc from "../assets/portfolio/banc.webp";
 import armoire from "../assets/portfolio/armoire.webp";
 import dressing2 from "../assets/portfolio/dressing2.webp";
 import table from "../assets/portfolio/table.webp";
 import fauteuil from "../assets/portfolio/fauteuil.webp";
 import bureau from "../assets/portfolio/bureau.webp";
-import {
-  Hammer,
-  ChefHat,
-  BookOpen,
-  Star,
-  CheckCircle,
-  MapPin,
-  Clock,
-  Phone,
-} from "lucide-react";
-
-const SERVICES = [
-  {
-    Icon: Hammer,
-    title: "Mobilier sur mesure",
-    desc: "Bibliothèques, dressings, bureaux, tables — conçus selon vos dimensions exactes.",
-  },
-  {
-    Icon: ChefHat,
-    title: "Cuisines équipées",
-    desc: "Agencement complet, caissons, façades et plans de travail en bois massif.",
-  },
-  {
-    Icon: BookOpen,
-    title: "Agencement & Rénovation",
-    desc: "Rénovation de meubles anciens, menuiserie intérieure, escaliers et parquets.",
-  },
-];
+import { Star, CheckCircle, MapPin, Clock, Phone } from "lucide-react";
 
 const REALISATIONS = [
-  { id: 1, label: "Cuisine sur mesure", img: cuisine2 },
+  { id: 1, label: "Chaises et table artisanale", img: table },
   { id: 2, label: "Armoire sur mesure", img: armoire },
   { id: 3, label: "Bibliothèque ouverte", img: dressing2 },
-  { id: 4, label: "Table artisanale", img: table },
+  { id: 4, label: "Banc en bois", img: banc },
   { id: 5, label: "Fauteuil en bois", img: fauteuil },
   { id: 6, label: "Bureau sur mesure", img: bureau },
 ];
@@ -91,8 +65,8 @@ function Home({ onNavigate }) {
           <span className="home__hero-tag">ARTISAN MENUISIER DEPUIS 2010</span>
           <h1>Du bois sur mesure, fait avec passion.</h1>
           <p>
-            Cuisines, bibliothèques, mobilier d'intérieur — chaque pièce est
-            imaginée et façonnée à la main dans notre atelier à Antananarivo.
+            Bibliothèques, mobilier d'intérieur — chaque pièce est imaginée et
+            façonnée à la main dans notre atelier à Antananarivo.
           </p>
           <div className="home__hero-actions">
             <WhatsAppButton
@@ -110,43 +84,31 @@ function Home({ onNavigate }) {
         </div>
       </section>
 
-      <section className="home__services">
-        <span className="home__services-tag">NOS SAVOIR-FAIRE</span>
-        <div className="home__services-grid">
-          {SERVICES.map((s) => (
-            <div key={s.title} className="service-card">
-              <div className="service-card__icon-wrap">
-                <s.Icon size={26} />
-              </div>
-              <h3>{s.title}</h3>
-              <p>{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <section className="home__portfolio">
         <span className="home__section-tag">PORTFOLIO</span>
         <h2>Nos réalisations</h2>
-        <div className="portfolio-grid">
-          {REALISATIONS.map((r) => (
+        <Marquee
+          items={REALISATIONS}
+          speed={35}
+          renderItem={(r) => (
             <div
-              key={r.id}
               className="portfolio-card"
               style={{ backgroundImage: `url(${r.img})` }}
             >
               <span>{r.label}</span>
             </div>
-          ))}
-        </div>
+          )}
+        />
       </section>
 
       <section className="home__feedbacks">
         <span className="home__section-tag">AVIS CLIENTS</span>
         <h2>Ce qu'ils en disent</h2>
-        <div className="feedbacks-grid">
-          {TEMOIGNAGES.map((t) => (
-            <div key={t.nom} className="feedback-card">
+        <Marquee
+          items={TEMOIGNAGES}
+          speed={40}
+          renderItem={(t) => (
+            <div className="feedback-card">
               <div className="feedback-card__stars">
                 {Array.from({ length: t.note }).map((_, i) => (
                   <Star key={i} size={16} fill="#f59e0b" color="#f59e0b" />
@@ -158,8 +120,8 @@ function Home({ onNavigate }) {
                 <span>{t.ville}</span>
               </div>
             </div>
-          ))}
-        </div>
+          )}
+        />
       </section>
 
       <section className="home__trust">
@@ -192,9 +154,22 @@ function Home({ onNavigate }) {
       <footer className="home__footer">
         <strong>GEPPETTO'S HOUSE</strong>
         <span className="home__footer-subtitle">MENUISERIE · MADAGASCAR</span>
-        <p className="home__footer-links">
-          Antananarivo, Madagascar · WhatsApp · Devis gratuit
-        </p>
+
+        <nav className="home__footer-links">
+          <button onClick={() => onNavigate("devis")}>Demander un devis</button>
+          <a
+            href="https://wa.me/261340000000?text=Bonjour%2C%20j%27aimerais%20discuter%20d%27un%20projet."
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp
+          </a>
+          <button onClick={() => onNavigate("apropos")}>À propos</button>
+          <button onClick={() => onNavigate("mentions-legales")}>
+            Mentions légales
+          </button>
+        </nav>
+
         <p className="home__footer-copy">
           © 2026 Geppetto's House. Tous droits réservés.
         </p>

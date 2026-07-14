@@ -10,12 +10,16 @@ class DevisSerializer(serializers.ModelSerializer):
         model  = Devis
         fields = [
             'id', 'client', 'type_meuble', 'dimensions_approximatives',
-            'materiau', 'message_whatsapp_genere', 'statut',
-            'date_creation', 'date_relance_j3', 'date_relance_j7',
+            'materiau',
+            'code_postal', 'ville', 'type_client', 'type_travaux',
+            'type_produit', 'quantite', 'budget', 'delai', 'description',
+            'photo_plan', 'message_whatsapp_genere',
+            'statut', 'ip_address', 'date_creation', 'date_relance_j3', 'date_relance_j7',
         ]
         read_only_fields = [
             'message_whatsapp_genere',  # généré automatiquement dans la view
             'statut',                   # géré par le relanceur, pas le client
+            'ip_address',
             'date_creation',
             'date_relance_j3',
             'date_relance_j7',
@@ -25,14 +29,17 @@ class DevisSerializer(serializers.ModelSerializer):
 class DevisCreationSerializer(serializers.ModelSerializer):
     """
     Utilisé uniquement pour la création depuis le formulaire public.
-    Le visiteur remplit type_meuble, dimensions, materiau.
-    message_whatsapp_genere est construit dans la view avant save().
     """
     site_web = serializers.CharField(required=False, allow_blank=True, write_only=True)
  
     class Meta:
         model  = Devis
-        fields = ['type_meuble', 'dimensions_approximatives', 'materiau', 'site_web']
+        fields = [
+            'type_meuble', 'dimensions_approximatives', 'materiau',
+            'code_postal', 'ville', 'type_client', 'type_travaux',
+            'type_produit', 'quantite', 'description', 'delai',
+            'budget', 'photo_plan', 'site_web'
+        ]
  
     def validate_site_web(self, value):
         if value:
@@ -41,7 +48,12 @@ class DevisCreationSerializer(serializers.ModelSerializer):
             # rendre son bot plus subtil. Un message générique suffit.
             raise serializers.ValidationError("Une erreur est survenue.")
         return value
- 
+
+    def create(self, validated_data):
+        # Exclure le honeypot de validated_data pour éviter l'erreur Devis() got unexpected keyword argument 'site_web'
+        validated_data.pop('site_web', None)
+        return super().create(validated_data)
+
 
 
 class DevisStatutSerializer(serializers.ModelSerializer):

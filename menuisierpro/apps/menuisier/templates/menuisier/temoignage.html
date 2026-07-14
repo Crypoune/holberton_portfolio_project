@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Gepetto's House — Partagez votre avis{% endblock %}
+
+{% block content %}
+<div class="card fade-in">
+  <div class="card__header">
+    <h1>Votre avis nous intéresse</h1>
+    <p>Merci de prendre un instant pour évaluer la réalisation de votre projet <strong>{{ temoignage.chantier.titre }}</strong>.</p>
+  </div>
+
+  <div class="project-summary">
+    <div class="project-summary__item">
+      <span class="label">Type de travaux :</span>
+      <span class="value">{{ temoignage.chantier.type_travaux }}</span>
+    </div>
+    {% if temoignage.chantier.materiau_utilise %}
+    <div class="project-summary__item">
+      <span class="label">Matériau utilisé :</span>
+      <span class="value">{{ temoignage.chantier.materiau_utilise }}</span>
+    </div>
+    {% endif %}
+    {% if temoignage.chantier.localisation %}
+    <div class="project-summary__item">
+      <span class="label">Localisation :</span>
+      <span class="value">{{ temoignage.chantier.localisation }}</span>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if errors %}
+  <div class="alert alert--danger">
+    <p>Veuillez corriger les erreurs suivantes :</p>
+    <ul>
+      {% for field, error_list in errors.items %}
+        {% for error in error_list %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <form method="post" action="{% url 'menuisier:temoignage' %}?token={{ temoignage.token_validation }}" class="form-temoignage">
+    {% csrf_token %}
+    <input type="hidden" name="token" value="{{ temoignage.token_validation }}">
+
+    <!-- Star Rating Selection -->
+    <div class="form-group">
+      <label class="form-label">Votre note de satisfaction *</label>
+      <div class="stars-selector">
+        <input type="radio" id="star5" name="note" value="5" {% if temoignage.note == 5 or not temoignage.note %}checked{% endif %} class="star-radio" />
+        <label for="star5" title="5 étoiles" class="star-label">★</label>
+        
+        <input type="radio" id="star4" name="note" value="4" {% if temoignage.note == 4 %}checked{% endif %} class="star-radio" />
+        <label for="star4" title="4 étoiles" class="star-label">★</label>
+        
+        <input type="radio" id="star3" name="note" value="3" {% if temoignage.note == 3 %}checked{% endif %} class="star-radio" />
+        <label for="star3" title="3 étoiles" class="star-label">★</label>
+        
+        <input type="radio" id="star2" name="note" value="2" {% if temoignage.note == 2 %}checked{% endif %} class="star-radio" />
+        <label for="star2" title="2 étoiles" class="star-label">★</label>
+        
+        <input type="radio" id="star1" name="note" value="1" {% if temoignage.note == 1 %}checked{% endif %} class="star-radio" />
+        <label for="star1" title="1 étoile" class="star-label">★</label>
+      </div>
+    </div>
+
+    <!-- Review Text Content -->
+    <div class="form-group">
+      <label for="contenu" class="form-label">Votre témoignage (conseils, ressenti, qualité du bois...) *</label>
+      <textarea 
+        id="contenu" 
+        name="contenu" 
+        rows="6" 
+        placeholder="Rédigez votre retour ici. Vos remarques nous aident à nous améliorer et aident de futurs clients à faire le bon choix..." 
+        required 
+        class="form-control"
+      >{{ temoignage.contenu|default:"" }}</textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn--primary">
+        Soumettre mon avis
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Script optionnel de micro-animation interactive pour la sélection des étoiles
+  document.addEventListener('DOMContentLoaded', function() {
+    const radios = document.querySelectorAll('.star-radio');
+    const labels = document.querySelectorAll('.star-label');
+    
+    // Ajoute un feedback au survol pour rendre l'UI plus premium
+    labels.forEach(label => {
+      label.addEventListener('mouseenter', () => {
+        label.style.transform = 'scale(1.2) rotate(5deg)';
+      });
+      label.addEventListener('mouseleave', () => {
+        label.style.transform = 'scale(1)';
+      });
+    });
+  });
+</script>
+{% endblock %}

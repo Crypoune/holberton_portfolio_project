@@ -1,6 +1,6 @@
 import { Compass, LayoutDashboard, FolderOpen, MessageSquare, LogOut, Lock } from "lucide-react";
 
-function Sidebar({ activePage, onNavigate, isConnected, onLogout }) {
+function Sidebar({ activePage, onNavigate, isConnected, onLogout, isOpen }) {
   // Les liens visibles par TOUT LE MONDE (les clients)
   const publicLinks = [
     { id: "accueil", label: "Accueil", Icon: Compass },
@@ -9,7 +9,7 @@ function Sidebar({ activePage, onNavigate, isConnected, onLogout }) {
   ];
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? "" : "sidebar--closed"}`}>
       <div className="sidebar__brand">
         <h1>GEPPETTO'S HOUSE</h1>
       </div>
@@ -38,7 +38,7 @@ function Sidebar({ activePage, onNavigate, isConnected, onLogout }) {
               <LayoutDashboard size={18} />
               Tableau de bord
             </button>
-            
+
             <button className="sidebar__link" onClick={onLogout} style={{ color: "#ef4444" }}>
               <LogOut size={18} />
               Déconnexion

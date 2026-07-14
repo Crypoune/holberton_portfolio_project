@@ -15,6 +15,14 @@
     top: 0;
     left: 0;
     gap: 2.5rem;
+    transform: translateX(0);
+    transition: transform 0.25s ease;
+  }
+
+  &--closed {
+    @include lg {
+      transform: translateX(-100%);
+    }
   }
 
   &__brand {
@@ -82,6 +90,30 @@
 
     &:hover {
       color: #fff;
+    }
+  }
+}
+
+// Bouton toggle pour afficher/cacher la sidebar en desktop
+.sidebar-toggle {
+  display: none;
+
+  @include lg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 200;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    color: $color-orange;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.15);
     }
   }
 }

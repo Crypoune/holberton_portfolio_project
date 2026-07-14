@@ -76,26 +76,32 @@ TEMPLATES = [{
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# ------------------------------------------------------------------
-# CORRECTION — DB_PASSWORD : même angle mort que SECRET_KEY
-# ------------------------------------------------------------------
-# J'avais laissé passer ça la première fois : os.getenv('DB_PASSWORD', '')
-# revient à dire "si la variable d'env est absente, connecte-toi à Postgres
-# avec un mot de passe VIDE". Sur beaucoup d'installations Postgres mal
-# configurées (trust auth en local, ou simplement un mdp vide accepté), ça
-# ouvre littéralement l'accès à toute la base sans qu'aucune erreur ne soit
-# levée. Même principe de fail-fast que SECRET_KEY : mieux vaut un crash net
-# au démarrage qu'une base accessible sans mot de passe en silence.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'menuisierpro'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.environ['DB_PASSWORD'],
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+if os.getenv('USE_SQLITE', 'False') == 'True':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    # ------------------------------------------------------------------
+    # CORRECTION — DB_PASSWORD : même angle mort que SECRET_KEY
+    # ------------------------------------------------------------------
+    # Django lève une exception s'il manque le mot de passe de la DB
+    # pour éviter de tourner en mode vulnérable avec mot de passe vide.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'menuisierpro'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.environ['DB_PASSWORD'],
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': os.getenv('DB_SSLMODE', 'prefer'),
+            }
+        }
+    }
 
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Indian/Antananarivo'
@@ -113,18 +119,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ------------------------------------------------------------------
 # CHANGEMENT 3 — Throttling DRF (anti brute-force)
 # ------------------------------------------------------------------
-# Le guide Django est explicite : le framework ne limite pas nativement
-# les tentatives de connexion. Or ton endpoint /api/v1/auth/ (obtain_auth_token)
-# accepte des requêtes illimitées : un attaquant peut essayer des milliers
-# de mots de passe par minute (brute-force).
-# DRF fournit un système de "throttle" tout prêt : on limite le nombre de
-# requêtes par IP anonyme sur une fenêtre de temps. AnonRateThrottle vise les
-# requêtes non authentifiées (donc l'endpoint de login lui-même), et
-# UserRateThrottle protège aussi les endpoints une fois connecté.
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -134,13 +131,11 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '20/minute',   # ajuste selon ton besoin réel (formulaire devis public inclus)
+        'anon': '20/minute',
         'user': '100/minute',
     },
-    'DEFAULT_PAGINATION_CLASS': 
-        'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE': 20,
-
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 # ------------------------------------------------------------------

@@ -17,6 +17,7 @@ function QuotesCard({ quotes, onDelete }) {
   } = quotes;
 
   const daysThen = (date) => {
+    // eslint-disable-next-line react-hooks/purity
     const diff = Date.now() - new Date(date).getTime();
     return Math.floor(diff / (1000 * 60 * 60 * 24));
   };

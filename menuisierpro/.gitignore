@@ -10,3 +10,4 @@ static/css/
 node_modules/
 .DS_Store
 .dist/
+guide_soutenance.md
