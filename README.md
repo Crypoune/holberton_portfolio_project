@@ -1,10 +1,10 @@
-# 🪵 GEPETTO'S HOUSE — Site Web Dynamique & Espace Gestion pour Artisan Menuisier
+#  GEPETTO'S HOUSE — Site Web Dynamique & Espace Gestion pour Artisan Menuisier
 
 Projet full-stack découplé (React / Django REST Framework) développé pour un artisan menuisier-charpentier basé à Madagascar. Ce projet répond à des contraintes locales fortes (réseau mobile 3G/4G instable, coûts de data, usage prédominant de WhatsApp) tout en offrant une interface d'administration premium et sécurisée pour la gestion des chantiers et prospects.
 
 ---
 
-## 🛠️ 1. Architecture Système & Flux de Données
+## 1. Architecture Système & Flux de Données
 
 Le projet adopte une architecture découplée moderne et performante, optimisée pour le bas débit et la robustesse en production.
 
@@ -44,20 +44,20 @@ graph TB
     Artisan -->|Gestion Dashboard / Authentification| Vite
     Vite -->|Requêtes REST /api/v1/| Nginx
     Client -.->|Soumission Avis direct /temoignage/| Nginx
-    
+
     Nginx -->|Route /static/ & /media/| Nginx
     Nginx -->|Proxy pass API & Admin| DRF
     Nginx -->|Proxy pass Avis HTML| Templates
-    
+
     %% Backend internal
     DRF --> DB
     DjangoAdmin --> DB
     Templates --> DB
-    
+
     %% Media handling
     DjangoAdmin -->|Upload Images| Pillow
     Pillow -->|Compression & Enregistrement| Media
-    
+
     %% External
     DRF -.->|Génération Wa.me Link| WA
     Artisan -.->|Bouton Relance WhatsApp| WA
@@ -73,103 +73,104 @@ graph TB
 
 ---
 
-## 📋 2. Fonctionnalités & Spécifications Métier (MoSCoW)
+## 2. Fonctionnalités & Spécifications Métier (MoSCoW)
 
 L'application a été conçue et priorisée pour offrir une valeur métier immédiate à l'artisan sans ajouter de complexité inutile.
 
-### 📌 Must Have (Indispensable)
+###  Must Have (Indispensable)
 - **Générateur de devis WhatsApp** : Formulaire interactif en plusieurs étapes permettant au prospect de configurer sa demande de mobilier (type, dimensions, essence de bois, budget, plan/photo).
 - **Console d'Administration Sécurisée** : Espace réservé à l'artisan pour visualiser les devis reçus, suivre le statut des clients, et modérer les avis.
 - **Intégration Click-to-Chat WhatsApp** : Bouton sur chaque carte devis permettant à l'artisan de démarrer immédiatement une conversation WhatsApp avec le client sans ajouter manuellement le numéro à ses contacts.
 
-### 📌 Should Have (Important)
+###  Should Have (Important)
 - **Portfolio Dynamique & Lightbox** : Galerie photo fluide présentant les chantiers réalisés (filtrable par matériau et type de travaux) avec un affichage grand écran des photos avant/après.
 - **Carrousels animés (Marquee)** : Défilement fluide horizontal automatique des réalisations et des retours clients sur la page d'accueil pour donner une impression de dynamisme.
 
-### 📌 Could Have (Optionnel)
+###  Could Have (Optionnel)
 - **Collecte automatique de témoignages** : Système générant un lien à usage unique envoyé par l'artisan à son client à la fin d'un chantier. Ce lien permet de récolter une note et un texte de satisfaction.
 
-### 📌 Won't Have (Exclu de la V1)
+###  Won't Have (Exclu de la V1)
 - **Paiement en ligne** : Non implémenté en raison des contraintes techniques et réglementaires sur les passerelles de paiement à Madagascar.
 
 ---
 
-## 🗂️ 3. Modèle de Données (Base de Données)
+## 3. Modèle de Données (Base de Données)
 
 Le schéma relationnel ci-dessous détaille la structure des tables PostgreSQL implémentées dans l'application.
 
 ```mermaid
 erDiagram
+    USER {
+        int id PK
+        varchar username
+        varchar password
+        boolean is_staff
+        boolean is_superuser
+        varchar email
+        timestamp date_joined
+    }
+    AUTH_TOKEN {
+        varchar key PK
+        int user_id FK
+        timestamp created
+    }
     CLIENT_PROSPECT {
         int id PK
-        string nom
-        string telephone_whatsapp UK
-        string email
-        datetime date_creation
+        varchar nom
+        varchar telephone_whatsapp
+        varchar email
+        timestamp date_creation
     }
-    
     CHANTIER {
         int id PK
         int client_id FK
-        string titre
-        string slug UK
-        string type_travaux
-        string materiau_utilise
+        varchar titre
+        text description
+        varchar type_travaux
+        varchar materiau_utilise
         int budget_indicatif
-        string localisation
+        varchar localisation
+        varchar slug
         boolean est_termine
         date date_debut
         date date_fin
     }
-    
     IMAGE_CHANTIER {
         int id PK
         int chantier_id FK
-        string fichier_image
-        string categorie "Choice (avant, pendant, apres)"
-        int ordre
+        varchar fichier_image
+        varchar categorie
+        smallint ordre
     }
-    
-    TEMOIGNAGE {
-        int id PK
-        int chantier_id FK "OneToOne"
-        int client_id FK
-        text contenu
-        int note "1 à 5"
-        boolean est_valide
-        uuid token_validation UK
-        datetime date_soumission
-    }
-    
     DEVIS {
         int id PK
         int client_id FK
-        string type_meuble
-        string dimensions_approximatives
-        string materiau
-        string code_postal
-        string ville
-        string type_client
-        string type_travaux
-        string type_produit
-        int quantite
-        string budget
-        string delai
-        text description
-        string photo_plan
-        string ip_address
+        varchar type_meuble
+        varchar dimensions_approximatives
+        varchar materiau
         text message_whatsapp_genere
-        string statut "Choice (en_attente, relance_j3, relance_j7, converti, abandonne)"
-        datetime date_creation
-        datetime date_relance_j3
-        datetime date_relance_j7
+        timestamp date_creation
+        varchar statut
+        timestamp date_relance_j3
+        timestamp date_relance_j7
+    }
+    TEMOIGNAGE {
+        int id PK
+        int chantier_id FK
+        int client_id FK
+        text contenu
+        smallint note
+        boolean est_valide
+        uuid token_validation
+        timestamp date_soumission
     }
 
-    CLIENT_PROSPECT ||--o{ CHANTIER : "commande"
-    CLIENT_PROSPECT ||--o{ DEVIS : "soumet"
-    CLIENT_PROSPECT ||--o{ TEMOIGNAGE : "rédige"
-    CHANTIER ||--o{ IMAGE_CHANTIER : "illustré_par"
-    CHANTIER ||--|| TEMOIGNAGE : "reçoit"
+    USER ||--o| AUTH_TOKEN : "possede"
+    CLIENT_PROSPECT o|--o{ CHANTIER : "commande"
+    CLIENT_PROSPECT o|--o{ DEVIS : "demande"
+    CLIENT_PROSPECT o|--o{ TEMOIGNAGE : "redige"
+    CHANTIER ||--o{ IMAGE_CHANTIER : "illustre_par"
+    CHANTIER ||--o| TEMOIGNAGE : "fait_objet_de"
 ```
 
 ### Règles de transition des statuts de Devis :
@@ -180,61 +181,116 @@ erDiagram
 
 ---
 
-## 🔄 4. Flux Clés & Diagrammes de Séquence
+## 4. Flux Clés & Diagrammes de Séquence
+
+Les séquences ci-dessous reflètent le comportement réel implémenté dans le code (`DevisViewSet.create()`, `useQuotes.js`, `QuotesCard.jsx`), qui diverge sur certains points d'une version idéale décrite plus haut : à ce stade, la génération du lien WhatsApp de relance ne déclenche aucune écriture en base, et les dates de relance (`date_relance_j3`/`date_relance_j7`) ne sont pas calculées automatiquement à la création — ces points sont signalés en note à la fin de chaque diagramme.
 
 ### A. Soumission d'une demande de devis (Visiteur public)
 
-Le formulaire public transmet les données au backend en gérant l'anti-spam IP et le hachage des métadonnées.
+Le formulaire public envoie un JSON simple, traité par une méthode `create()` surchargée qui combine récupération/création du client et validation du devis dans une même transaction.
 
 ```mermaid
 sequenceDiagram
     actor Visiteur as Prospect (Visiteur)
     participant Front as SPA React (Vite)
-    participant Back as Django REST API
+    participant API as DevisViewSet (DRF)
     participant DB as PostgreSQL
 
-    Visiteur->>Front: Remplit le formulaire de devis & téléverse un plan (optionnel)
-    Front->>Front: Valide le format du téléphone (ex: +261 pour Madagascar)
-    Front->>Back: Requête POST /api/v1/devis/ (FormData)
-    Back->>Back: Vérifie l'anti-spam (max 3 requêtes / 15 min par IP/Téléphone)
-    Back->>Back: Valide le Honeypot (sécurité bot)
-    Back->>DB: Récupère ou crée le profil Client_Prospect (clé = téléphone)
-    Back->>Back: Calcule les dates de relance automatique (J+3 et J+7)
-    Back->>Back: Génère le contenu texte Wa.me pré-rempli
-    Back->>DB: INSERT INTO devis
-    DB-->>Back: Succès (ID & Données créées)
-    Back-->>Front: Réponse HTTP 201 Created (JSON)
-    Front->>Front: Enregistre le cooldown local dans localStorage
-    Front-->>Visiteur: Affiche l'écran de remerciement et confirmation
+    Visiteur->>Front: Remplit le formulaire (nom, telephone_whatsapp, type_meuble, dimensions, materiau)
+    Front->>API: POST /api/v1/devis/ (JSON — action "create", AllowAny)
+    Note over API: Throttle DRF global (AnonRateThrottle, 20 req/min)
+
+    API->>API: Vérifie que nom et telephone_whatsapp sont fournis
+    alt Champ obligatoire manquant
+        API-->>Front: 400 Bad Request
+    else Champs présents
+        API->>DB: transaction.atomic() -> Client_Prospect.get_or_create(telephone_whatsapp)
+        DB-->>API: Client (existant ou nouvellement créé)
+        API->>API: DevisCreationSerializer valide type_meuble / dimensions / materiau
+        alt Validation échouée
+            API-->>Front: 400 Bad Request (erreurs de validation)
+        else Validation OK
+            API->>DB: INSERT INTO devis (statut = en_attente par défaut)
+            API->>API: Construit message_whatsapp_genere (gabarit texte)
+            API->>DB: UPDATE devis SET message_whatsapp_genere
+            API-->>Front: 201 Created (devis + client en JSON)
+        end
+    end
+    Front-->>Visiteur: Affiche l'écran de confirmation
 ```
 
-### B. Relance de devis assistée (Espace Artisan)
+### B. Consultation et relance manuelle des devis (Espace Artisan)
 
-Pour éviter les frais d'API professionnelles (Meta Business API) inadaptés pour un petit artisan, le système utilise un protocole **hybride assisté**.
+Après authentification, le dashboard récupère en parallèle la liste des devis et les statistiques. Le bouton de relance ouvre directement une conversation WhatsApp pré-remplie ; il ne déclenche aucun appel API à ce stade.
 
 ```mermaid
 sequenceDiagram
     actor Artisan as Artisan (Admin)
-    participant Dash as Dashboard React
+    participant Login as Login.jsx
+    participant Dash as Dashboard React (useQuotes)
+    participant API as API DRF (IsArtisanStaff)
     participant DB as PostgreSQL
-    participant WA as API WhatsApp wa.me
+    participant WA as WhatsApp (wa.me)
 
-    Artisan->>Dash: Accède à l'onglet "Devis à relancer"
-    Dash->>DB: GET /api/v1/devis/?statut=en_attente
-    DB-->>Dash: Renvoie la liste des devis
-    Dash->>Dash: Identifie les devis dont la date actuelle >= date_relance_j3
-    Artisan->>Dash: Clique sur le bouton de relance rapide
-    Dash->>WA: Redirection wa.me/+26134xxxxxx/?text=Bonjour...
-    WA-->>Artisan: Ouvre l'app WhatsApp locale avec le texte pré-rempli
-    Artisan->>WA: Valide l'envoi manuel dans WhatsApp
-    Artisan->>Dash: Confirme l'envoi sur le tableau de bord
-    Dash->>DB: PATCH /api/v1/devis/{id}/ (statut = relance_j3)
-    DB-->>Dash: Succès (Statut mis à jour)
+    Artisan->>Login: Saisit identifiant / mot de passe
+    Login->>API: POST /api/v1/auth/ (obtain_auth_token)
+    API-->>Login: 200 OK { token } ou 400 si identifiants invalides
+    Login->>Dash: onLoginSuccess(token) — token conservé côté App.jsx
+
+    Dash->>API: Promise.all -> GET /api/v1/devis/?statut=... & GET /api/v1/dashboard/stats/
+    API->>API: Vérifie IsArtisanStaff (401/403 sinon)
+    alt Token invalide ou droits insuffisants
+        API-->>Dash: 401 / 403
+        Dash->>Dash: handleResponse() déclenche onAuthError (déconnexion)
+    else Accès autorisé
+        API->>DB: SELECT devis filtrés + agrégation des statistiques
+        DB-->>API: Résultats
+        API-->>Dash: 200 OK (liste des devis + statistiques)
+    end
+
+    Dash->>Dash: QuotesCard.labelButton() calcule "Relance J+3" / "Relance J+7" / "Contacter" à partir des dates déjà stockées
+    Artisan->>Dash: Clique sur le bouton WhatsApp de la carte devis
+    Dash->>WA: Ouvre wa.me/{telephone}?text={message_whatsapp_genere}
+    WA-->>Artisan: Conversation WhatsApp pré-remplie
+    Note over Dash,DB: Dans cette version, le clic n'entraîne aucune mise à jour du statut ou des dates de relance en base — la ressource DevisStatutSerializer existe mais n'est pas encore câblée à une route ni à une action frontend.
+```
+
+### C. Suppression d'un devis (Espace Artisan)
+
+Suppression avec confirmation et mise à jour optimiste de l'interface, avec retour arrière en cas d'échec.
+
+```mermaid
+sequenceDiagram
+    actor Artisan as Artisan (Admin)
+    participant Card as QuotesCard.jsx
+    participant Dash as useQuotes.js
+    participant API as API DRF (IsArtisanStaff)
+    participant DB as PostgreSQL
+
+    Artisan->>Card: Clique sur l'icône de suppression
+    Card->>Card: window.confirm() — demande de confirmation
+    alt Annulation
+        Card-->>Artisan: Aucune action
+    else Confirmé
+        Card->>Dash: deleteQuote(id)
+        Dash->>Dash: Retire immédiatement le devis de la liste affichée (optimiste)
+        Dash->>API: DELETE /api/v1/devis/{id}/
+        API->>API: Vérifie IsArtisanStaff (401/403 sinon)
+        alt Suppression réussie
+            API->>DB: DELETE FROM devis WHERE id = {id}
+            API-->>Dash: 204 No Content
+            Dash->>Dash: Rafraîchit le dashboard (fetchDashboard)
+        else Échec (401/403 ou erreur serveur)
+            API-->>Dash: Code d'erreur
+            Dash->>Dash: Restaure la liste précédente (rollback)
+            Dash-->>Artisan: Message d'erreur (window.alert)
+        end
+    end
 ```
 
 ---
 
-## 🔌 5. Spécifications des APIs
+## 5. Spécifications des APIs
 
 ### API Externe (WhatsApp click-to-chat)
 - **Base URL** : `https://wa.me/{telephone}`
@@ -297,7 +353,7 @@ Toutes les routes internes sont préfixées par `/api/v1/`.
 
 ---
 
-## 🚀 6. Installation & Lancement Rapide
+## 6. Installation & Lancement Rapide
 
 ### Prérequis
 - [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
@@ -373,7 +429,7 @@ Toutes les routes internes sont préfixées par `/api/v1/`.
 
 ---
 
-## 💾 7. Sauvegardes & Maintenance (`backup.sh`)
+## 7. Sauvegardes & Maintenance (`backup.sh`)
 
 Un script de sauvegarde unifié est présent dans `menuisierpro/backup.sh`. Il prend en charge la base de données PostgreSQL ou SQLite (selon la configuration courante).
 
@@ -390,11 +446,12 @@ Pour planifier la sauvegarde tous les jours à 3h du matin, ajoutez la ligne sui
 
 ---
 
-## 👥 8. Équipe & Git Flow
+## 8. Git Flow
 
 Ce projet a été réalisé en binôme. Pour éviter tout conflit de code ou de migration de base de données :
 - **Branche `main`** : Branche de production. Code stable et testé. Les commits directs y sont proscrits.
-- **Branche `test`** : Branche d'intégration globale servant de tronc commun de validation.
-- **Branches fonctionnelles** :
-  - `yori` & `jason` : Développements des vues de l'application, du configurateur de devis et du frontend React.
-  - `backendthomas` : Mise en place de la sécurité, configuration de la production, Pillow et initialisation de la base PostgreSQL.
+- **Branche `release/demo`** : Branche d'intégration globale servant de tronc commun de validation.
+## 9. Equipe 
+
+Contributeurs : 
+Arnaud M. : arnaudmessenet@gmail.com, Jason JL. : jasonjeanlouis1@gmail.com, Thomas H. : thomas.haenel101@gmail.com
