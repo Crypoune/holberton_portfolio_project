@@ -12,3 +12,4 @@ node_modules/
 .dist/
 guide_soutenance.md
 fiches_connaissances_backend.md
+backups/
