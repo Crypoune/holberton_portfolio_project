@@ -8,32 +8,44 @@ import Dashboard from "./pages/Dashboard";
 import Portfolio from "./pages/Portfolio";
 import RequestQuote from "./pages/RequestQuote";
 import Login from "./pages/Login";
-import Atelier from "./pages/Atelier";
+import Workshop from "./pages/Workshop";
 
 function App() {
-  // 1. L'application démarre l'Accueil public
+  // Navigation gérée avec un useState.
+  // Choix volontaire : projet simple, pas besoin de React Router.
+
+  // Page actuellement affichée.
   const [activePage, setActivePage] = useState("accueil");
 
-  // 2. On vérifie si un badge (token) est déjà enregistré dans le navigateur
+  // Token d'authentification.
+  // Initialisé depuis localStorage pour conserver la session.
+  // localStorage : simple à utiliser mais moins sécurisé qu'un cookie HttpOnly.
   const [token, setToken] = useState(localStorage.getItem("token"));
 
+  // État d'ouverture de la barre latérale.
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  // Connexion réussie :
+  // - stockage du token
+  // - mise à jour de l'état
+  // - ouverture du dashboard
   const handleLoginSuccess = (newToken) => {
-    localStorage.setItem("token", newToken); // On range le badge dans la poche
-    setToken(newToken);
-    setActivePage("dashboard"); // On ouvre la porte du tableau de bord
+    localStorage.setItem("token", newToken); // Persistance de la session.
+    setToken(newToken); // Mise à jour de React.
+    setActivePage("dashboard"); // Navigation vers le dashboard.
   };
 
+  // Déconnexion utilisateur.
+  // Également utilisé si le backend refuse le token (401/403).
   const handleLogout = () => {
-    localStorage.removeItem("token"); // On jette le badge
-    setToken(null);
-    setActivePage("accueil"); // Retour à la boutique publique
+    localStorage.removeItem("token"); // Suppression du token.
+    setToken(null); // Mise à jour de React.
+    setActivePage("accueil"); // Retour à l'accueil.
   };
 
   return (
     <div className="app">
-      {/* On passe l'état de connexion aux barres de navigation */}
+      {/* Navigation latérale */}
       <Sidebar
         activePage={activePage}
         onNavigate={setActivePage}
@@ -41,15 +53,18 @@ function App() {
         onLogout={handleLogout}
         isOpen={sidebarOpen}
       />
+      {/* Barre supérieure */}
       <Header
         onNavigate={setActivePage}
         isConnected={!!token}
-        onToggleSidebar={() => setSidebarOpen((v) => !v)}
+        onToggleSidebar={() => setSidebarOpen((v) => !v)} // Inverse l'état actuel de la sidebar (ouverte <-> fermée).
       />
 
+      {/* Zone principale de l'application */}
       <div
         className={`app__content ${sidebarOpen ? "" : "app__content--full"}`}
       >
+        {/* Affichage conditionnel des pages */}
         {activePage === "accueil" && <Home onNavigate={setActivePage} />}
         {activePage === "portfolio" && <Portfolio />}
         {activePage === "devis" && <RequestQuote />}
@@ -58,12 +73,18 @@ function App() {
         {activePage === "login" && (
           <Login onLoginSuccess={handleLoginSuccess} />
         )}
-        {activePage === "atelier" && <Atelier />}
+        {activePage === "atelier" && <Workshop />}
 
-        {/* LE SAS DE SÉCURITÉ : Si l'utilisateur force l'affichage du dashboard sans token, on lui montre le login */}
-        {activePage === "dashboard" && (
-          token ? <Dashboard token={token} onAuthError={handleLogout} /> : <Login onLoginSuccess={handleLoginSuccess} />
-        )}
+        {/* Rendu conditionnel selon l'authentification */}
+        {/* Protection du dashboard :
+            token -> Dashboard
+            pas de token -> Login */}
+        {activePage === "dashboard" &&
+          (token ? (
+            <Dashboard token={token} onAuthError={handleLogout} />
+          ) : (
+            <Login onLoginSuccess={handleLoginSuccess} />
+          ))}
       </div>
     </div>
   );
