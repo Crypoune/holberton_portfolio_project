@@ -1,26 +1,27 @@
 @use "../variables" as *;
 
 .marquee {
-  overflow: hidden;
+  overflow: hidden; // Cache les éléments qui sortent de la zone visible.
   width: 100%;
 
   &:hover .marquee__track {
-    animation-play-state: paused;
+    animation-play-state: paused; // Met le défilement en pause quand l'utilisateur passe la souris dessus.
   }
 
   &__track {
-    display: flex;
+    display: flex; // Place tous les éléments sur une seule ligne.
     gap: 1rem;
-    width: max-content;
+    width: max-content; // Le conteneur prend exactement la largeur de son contenu, ce qui permet au défilement de fonctionner correctement.
     animation: marquee-scroll var(--marquee-duration, 30s) linear infinite;
   }
 
   &__item {
-    flex-shrink: 0;
+    flex-shrink: 0; // Empêche les éléments de rétrécir lorsqu'ils sont alignés côte à côte.
   }
 }
 
 @keyframes marquee-scroll {
+  // Lance l'animation en boucle.
   from {
     transform: translateX(0);
   }
