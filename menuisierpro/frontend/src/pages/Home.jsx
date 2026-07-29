@@ -9,6 +9,7 @@ import fauteuil from "../assets/portfolio/fauteuil.webp";
 import bureau from "../assets/portfolio/bureau.webp";
 import { Star, CheckCircle, MapPin, Clock, Phone } from "lucide-react";
 
+// Données affichées dans le carrousel des réalisations.
 const REALISATIONS = [
   { id: 1, label: "Chaises et table artisanale", img: table },
   { id: 2, label: "Armoire sur mesure", img: armoire },
@@ -18,6 +19,7 @@ const REALISATIONS = [
   { id: 6, label: "Bureau sur mesure", img: bureau },
 ];
 
+// Témoignages affichés dans le carrousel des avis clients.
 const TEMOIGNAGES = [
   {
     nom: "Hery Rakotomalala",
@@ -42,6 +44,7 @@ const TEMOIGNAGES = [
   },
 ];
 
+// Indicateurs de confiance affichés sous forme de grille.
 const TRUST = [
   {
     Icon: CheckCircle,
