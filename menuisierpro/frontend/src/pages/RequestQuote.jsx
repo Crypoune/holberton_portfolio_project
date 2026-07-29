@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 
-const TYPES_TRAVAUX = [
-  "Rénovation (remplacement)",
-  "Neuf (construction)",
-];
+const TYPES_TRAVAUX = ["Rénovation (remplacement)", "Neuf (construction)"];
 
 const TYPES_PRODUIT = [
   "Fenêtres / Portes-fenêtres",
@@ -38,6 +35,9 @@ const BUDGETS = [
 ];
 
 function RequestQuote() {
+  // Formulaire contrôlé par React.
+  // Les valeurs sont stockées dans le state.
+  // Champs pré-remplis uniquement pour la démo.
   const [form, setForm] = useState({
     nom: "Rakoto Michel",
     telephone_whatsapp: "+261340001234",
@@ -56,19 +56,31 @@ function RequestQuote() {
     photo_plan: null,
   });
 
+  // Une seule variable (status) pilote tout le formulaire.
+  //
+  // idle   -> formulaire prêt
+  // envoi  -> requête en cours
+  // succes -> message de confirmation
+  // erreur -> affichage d'une erreur
   const [status, setStatus] = useState("idle"); // idle | envoi | succes | erreur
-  const [validationError, setValidationError] = useState("");
-  const [cooldownRemaining, setCooldownRemaining] = useState(0);
-  const [isDragActive, setIsDragActive] = useState(false);
+  const [validationError, setValidationError] = useState(""); // Message d'erreur affiché à l'utilisateur.
+  const [cooldownRemaining, setCooldownRemaining] = useState(0); // Temps restant avant un nouvel envoi (en secondes).
+  const [isDragActive, setIsDragActive] = useState(false); // Active le style visuel pendant un glisser-déposer.
 
-  // Vérifier la limitation de débit (15 minutes de cooldown après soumission réussie)
+  // Vérifie toutes les secondes si le délai d'attente est terminé.
+  // Le cooldown est conservé dans localStorage.
   useEffect(() => {
+    // Calcule le temps restant avant un nouvel envoi.
     const checkCooldown = () => {
+      // Récupère la date du dernier devis envoyé.
       const lastSubmit = localStorage.getItem("last_quote_submitted_at");
       if (lastSubmit) {
+        // Temps écoulé depuis le dernier envoi.
         const elapsedMs = Date.now() - parseInt(lastSubmit, 10);
+        // Durée du cooldown (15 minutes).
         const cooldownMs = 15 * 60 * 1000;
         if (elapsedMs < cooldownMs) {
+          // Calcul du temps restant.
           const remainingSec = Math.ceil((cooldownMs - elapsedMs) / 1000);
           setCooldownRemaining(remainingSec);
         } else {
@@ -77,17 +89,21 @@ function RequestQuote() {
       }
     };
 
+    // Vérification immédiate au chargement.
     checkCooldown();
-    const interval = setInterval(checkCooldown, 1000);
-    return () => clearInterval(interval);
+    const interval = setInterval(checkCooldown, 1000); // Vérification toutes les secondes.
+    return () => clearInterval(interval); // Nettoyage de l'intervalle lors du démontage.
   }, [status]);
 
+  // Met à jour le state du formulaire.
+  // Efface une ancienne erreur dès qu'on ressaisit.
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
     setValidationError("");
   };
 
+  // Gestion du drag & drop.
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -113,15 +129,22 @@ function RequestQuote() {
     }
   };
 
+  // Validation côté client.
+  // Retourne false dès la première erreur.
   const validateForm = () => {
-    // 1. Validation du Nom complet
+    // 1. Validation du nom
     if (!/^[a-zA-ZÀ-ÿ\s-']{3,100}$/.test(form.nom.trim())) {
-      setValidationError("Le nom doit comporter entre 3 et 100 caractères (lettres et espaces uniquement).");
+      setValidationError(
+        "Le nom doit comporter entre 3 et 100 caractères (lettres et espaces uniquement).",
+      );
       return false;
     }
 
-    // 2. Validation de l'Email (optionnel)
-    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+    // 2. Validation de l'email (optionnel)
+    if (
+      form.email.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
+    ) {
       setValidationError("Le format de l'adresse e-mail n'est pas valide.");
       return false;
     }
@@ -134,31 +157,41 @@ function RequestQuote() {
     }
 
     if (!telClean.startsWith("+")) {
-      setValidationError("Le numéro doit commencer par '+' suivi du code pays (ex: +261 pour Madagascar, +33 pour la France).");
+      setValidationError(
+        "Le numéro doit commencer par '+' suivi du code pays (ex: +261 pour Madagascar, +33 pour la France).",
+      );
       return false;
     }
 
     if (telClean.startsWith("+261")) {
       const local = telClean.slice(4);
       if (!/^3[23489]\d{7}$/.test(local)) {
-        setValidationError("Pour Madagascar, le numéro après +261 doit comporter 9 chiffres et commencer par 32, 33, 34, 38 ou 39.");
+        setValidationError(
+          "Pour Madagascar, le numéro après +261 doit comporter 9 chiffres et commencer par 32, 33, 34, 38 ou 39.",
+        );
         return false;
       }
     } else if (telClean.startsWith("+33")) {
       const local = telClean.slice(3);
       if (!/^[1-9]\d{8}$/.test(local)) {
-        setValidationError("Pour la France, le numéro après +33 doit comporter 9 chiffres (sans le 0 initial).");
+        setValidationError(
+          "Pour la France, le numéro après +33 doit comporter 9 chiffres (sans le 0 initial).",
+        );
         return false;
       }
     } else if (telClean.startsWith("+262")) {
       const local = telClean.slice(4);
       if (!/^[1-9]\d{8}$/.test(local)) {
-        setValidationError("Pour la Réunion ou Mayotte, le numéro après +262 doit comporter 9 chiffres.");
+        setValidationError(
+          "Pour la Réunion ou Mayotte, le numéro après +262 doit comporter 9 chiffres.",
+        );
         return false;
       }
     } else {
       if (!/^\+[1-9]\d{7,14}$/.test(telClean)) {
-        setValidationError("Le format du numéro de téléphone international est invalide.");
+        setValidationError(
+          "Le format du numéro de téléphone international est invalide.",
+        );
         return false;
       }
     }
@@ -198,22 +231,28 @@ function RequestQuote() {
     return true;
   };
 
+  // Envoi du formulaire.
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Empêche le rechargement de la page.
     setValidationError("");
 
+    // Vérifie le cooldown.
     if (cooldownRemaining > 0) {
-      setValidationError(`Veuillez patienter encore ${formatTime(cooldownRemaining)} avant de faire une nouvelle demande.`);
+      setValidationError(
+        `Veuillez patienter encore ${formatTime(cooldownRemaining)} avant de faire une nouvelle demande.`,
+      );
       return;
     }
 
+    // Validation du formulaire.
     if (!validateForm()) return;
 
-    setStatus("envoi");
+    // Passage en mode "envoi".
+    setStatus("envoi"); // -> désactive le bouton, affiche "Envoi en cours..."
 
     const telClean = form.telephone_whatsapp.replace(/[\s-()]/g, "");
-    
-    // Utiliser FormData pour l'envoi de fichier
+
+    // FormData permet d'envoyer un fichier avec les autres champs.
     const formData = new FormData();
     formData.append("nom", form.nom.trim());
     formData.append("telephone_whatsapp", telClean);
@@ -224,7 +263,10 @@ function RequestQuote() {
     formData.append("type_travaux", form.type_travaux);
     formData.append("type_produit", form.type_produit);
     formData.append("type_meuble", form.type_produit); // Compatibilité type_meuble requis dans l'ancien modèle
-    formData.append("dimensions_approximatives", form.dimensions_approximatives.trim());
+    formData.append(
+      "dimensions_approximatives",
+      form.dimensions_approximatives.trim(),
+    );
     formData.append("quantite", form.quantite);
     formData.append("materiau", form.materiau);
     formData.append("description", form.description.trim());
@@ -234,23 +276,36 @@ function RequestQuote() {
       formData.append("photo_plan", form.photo_plan);
     }
 
+    // Appel de l'API Django.
     try {
       const res = await fetch("/api/v1/devis/", {
         method: "POST",
         body: formData,
       });
 
+      // Réponse convertie en objet JavaScript.
       const data = await res.json();
 
+      // Point important pour l'oral (API design / gestion d'erreurs) :
+      // - DRF, quand la validation serializer échoue côté back, renvoie un
+      //   code 400 avec un JSON détaillé PAR CHAMP, ex :
+      //   { "telephone_whatsapp": ["Ce champ est obligatoire."] }
+      // - Ici on simplifie volontairement : on affiche un message générique
+      //   (data.error) plutôt que de mapper chaque erreur de champ dans le
+      //   formulaire. C'est un choix assumé (la validation front couvre déjà
+      //   la majorité des cas), mais c'est une amélioration possible à
+      //   citer si on te demande "comment iriez-vous plus loin ?".
       if (!res.ok) {
         throw new Error(data.error || "Erreur lors de l'envoi du devis");
       }
 
       // eslint-disable-next-line react-hooks/purity
       localStorage.setItem("last_quote_submitted_at", Date.now().toString());
+      // Succès.
       setStatus("succes");
     } catch (err) {
       setValidationError(err.message || "Une erreur est survenue, réessayez.");
+      // Erreur.
       setStatus("erreur");
     }
   };
@@ -261,6 +316,8 @@ function RequestQuote() {
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
+  // Si l'envoi est réussi,
+  // on affiche directement l'écran de confirmation.
   if (status === "succes") {
     return (
       <main className="request-quote request-quote--succes">
@@ -281,9 +338,13 @@ function RequestQuote() {
       </header>
 
       {cooldownRemaining > 0 && (
-        <div className="request-quote__error" style={{ marginBottom: "1.5rem" }}>
+        <div
+          className="request-quote__error"
+          style={{ marginBottom: "1.5rem" }}
+        >
           Vous avez récemment soumis une demande. Veuillez patienter{" "}
-          <strong>{formatTime(cooldownRemaining)}</strong> avant d'effectuer une nouvelle estimation.
+          <strong>{formatTime(cooldownRemaining)}</strong> avant d'effectuer une
+          nouvelle estimation.
         </div>
       )}
       <form className="request-quote__form" onSubmit={handleSubmit}>
@@ -303,7 +364,9 @@ function RequestQuote() {
             onChange={handleChange}
           />
 
-          <label htmlFor="telephone_whatsapp">Numéro WhatsApp (Format: +261...) *</label>
+          <label htmlFor="telephone_whatsapp">
+            Numéro WhatsApp (Format: +261...) *
+          </label>
           <input
             id="telephone_whatsapp"
             name="telephone_whatsapp"
@@ -313,7 +376,15 @@ function RequestQuote() {
             value={form.telephone_whatsapp}
             onChange={handleChange}
           />
-          <small style={{ color: "#6b7280", fontSize: "0.75rem", display: "block", marginTop: "-0.25rem", marginBottom: "0.5rem" }}>
+          <small
+            style={{
+              color: "#6b7280",
+              fontSize: "0.75rem",
+              display: "block",
+              marginTop: "-0.25rem",
+              marginBottom: "0.5rem",
+            }}
+          >
             Le numéro doit commencer par '+' suivi du code pays.
           </small>
 
@@ -356,7 +427,15 @@ function RequestQuote() {
 
           <label style={{ marginTop: "1rem" }}>Type de client *</label>
           <div style={{ display: "flex", gap: "1.5rem", marginTop: "0.25rem" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontWeight: "normal" }}>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                cursor: "pointer",
+                fontWeight: "normal",
+              }}
+            >
               <input
                 type="radio"
                 name="type_client"
@@ -367,12 +446,22 @@ function RequestQuote() {
               />
               Particulier
             </label>
-            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontWeight: "normal" }}>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                cursor: "pointer",
+                fontWeight: "normal",
+              }}
+            >
               <input
                 type="radio"
                 name="type_client"
                 value="Professionnel / Architecte / Promoteur"
-                checked={form.type_client === "Professionnel / Architecte / Promoteur"}
+                checked={
+                  form.type_client === "Professionnel / Architecte / Promoteur"
+                }
                 onChange={handleChange}
                 style={{ width: "auto", margin: 0 }}
               />
@@ -428,8 +517,17 @@ function RequestQuote() {
             value={form.dimensions_approximatives}
             onChange={handleChange}
           />
-          <small style={{ color: "#6b7280", fontSize: "0.75rem", display: "block", marginTop: "-0.25rem", marginBottom: "0.5rem" }}>
-            Ne vous inquiétez pas, un technicien viendra valider les mesures exactes.
+          <small
+            style={{
+              color: "#6b7280",
+              fontSize: "0.75rem",
+              display: "block",
+              marginTop: "-0.25rem",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Ne vous inquiétez pas, un technicien viendra valider les mesures
+            exactes.
           </small>
 
           <label htmlFor="quantite">Nombre d'unités / Quantité *</label>
@@ -520,7 +618,9 @@ function RequestQuote() {
             onDrop={handleDrop}
             onClick={() => document.getElementById("photo_plan_input").click()}
             style={{
-              border: isDragActive ? "2px dashed #4b5563" : "2px dashed #d1d5db",
+              border: isDragActive
+                ? "2px dashed #4b5563"
+                : "2px dashed #d1d5db",
               borderRadius: "0.5rem",
               padding: "2rem",
               textAlign: "center",
@@ -544,14 +644,34 @@ function RequestQuote() {
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-            <p style={{ margin: 0, fontSize: "0.875rem", color: "#4b5563", fontWeight: "bold" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.875rem",
+                color: "#4b5563",
+                fontWeight: "bold",
+              }}
+            >
               Glissez-déposez vos fichiers ici ou cliquez pour choisir
             </p>
-            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#9ca3af" }}>
+            <p
+              style={{
+                margin: "0.25rem 0 0 0",
+                fontSize: "0.75rem",
+                color: "#9ca3af",
+              }}
+            >
               Formats acceptés : PDF, PNG, JPG, JPEG
             </p>
             {form.photo_plan && (
-              <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.875rem", color: "#10b981", fontWeight: "bold" }}>
+              <p
+                style={{
+                  margin: "0.5rem 0 0 0",
+                  fontSize: "0.875rem",
+                  color: "#10b981",
+                  fontWeight: "bold",
+                }}
+              >
                 Fichier sélectionné : {form.photo_plan.name}
               </p>
             )}
@@ -564,15 +684,21 @@ function RequestQuote() {
               accept=".pdf,image/*"
             />
           </div>
-          <small style={{ color: "#6b7280", fontSize: "0.75rem", display: "block", marginTop: "0.5rem" }}>
-            Conseil de pro : Permettre l'envoi de photos de l'existant ou de plans d'architecte fait gagner un temps précieux à l'atelier.
+          <small
+            style={{
+              color: "#6b7280",
+              fontSize: "0.75rem",
+              display: "block",
+              marginTop: "0.5rem",
+            }}
+          >
+            Conseil de pro : Permettre l'envoi de photos de l'existant ou de
+            plans d'architecte fait gagner un temps précieux à l'atelier.
           </small>
         </fieldset>
 
         {validationError && (
-          <p className="request-quote__error">
-            {validationError}
-          </p>
+          <p className="request-quote__error">{validationError}</p>
         )}
 
         {status === "erreur" && (
