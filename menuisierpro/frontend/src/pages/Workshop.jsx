@@ -1,5 +1,5 @@
 // frontend/src/pages/Atelier.jsx
-function Atelier() {
+function Workshop() {
   return (
     <main className="atelier">
       <header className="atelier__hero">
@@ -56,4 +56,4 @@ function Atelier() {
   );
 }
 
-export default Atelier;
+export default Workshop;
