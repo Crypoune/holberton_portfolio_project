@@ -1,11 +1,15 @@
 @use "variables" as *;
 
+// Mixin responsive pour les écrans moyens.
+// Injecte les styles fournis dans une media query basée sur $breakpoint-md.
 @mixin md {
   @media (min-width: #{$breakpoint-md}) {
     @content;
   }
 }
 
+// Mixin responsive pour les grands écrans.
+// Injecte les styles fournis dans une media query basée sur $breakpoint-lg.
 @mixin lg {
   @media (min-width: #{$breakpoint-lg}) {
     @content;
